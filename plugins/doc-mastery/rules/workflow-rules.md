@@ -6,7 +6,7 @@ over these rules, and these rules win over any skill (including Superpowers).
 
 ## Methodology
 
-Follow **Superpowers** (`superpowers@superpowers-marketplace`): brainstorm → design doc →
+Follow **Superpowers** (installed with this plugin): brainstorm → design doc →
 plan → implement with TDD → review → finish. The project's `CLAUDE.md` records only what is
 specific to that project.
 

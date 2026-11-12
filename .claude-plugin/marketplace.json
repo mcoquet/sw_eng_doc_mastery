@@ -5,14 +5,29 @@
     "url": "https://github.com/mcoquet"
   },
   "description": "Superpowers-based development workflow with living documentation: glossary, domain model, C4 architecture and ADRs.",
-  "allowCrossMarketplaceDependenciesOn": ["superpowers-marketplace"],
   "plugins": [
     {
       "name": "doc-mastery",
       "source": "./plugins/doc-mastery",
       "description": "Always-on workflow rules plus C4, domain-model and domain-modeling skills, on top of Superpowers.",
       "category": "development",
-      "tags": ["superpowers", "documentation", "c4", "adr", "ddd"]
+      "tags": [
+        "superpowers",
+        "documentation",
+        "c4",
+        "adr",
+        "ddd"
+      ]
+    },
+    {
+      "name": "superpowers",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/obra/superpowers.git",
+        "ref": "v7.0.2"
+      },
+      "description": "Superpowers by Jesse Vincent (obra/superpowers), listed here unmodified so doc-mastery can install it as a dependency.",
+      "category": "development"
     }
   ]
 }

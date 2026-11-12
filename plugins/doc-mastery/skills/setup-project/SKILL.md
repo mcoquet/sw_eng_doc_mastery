@@ -26,19 +26,23 @@ Merge, keeping every key already there:
 {
   "env": { "SUPERPOWERS_DISABLE_TELEMETRY": "1" },
   "extraKnownMarketplaces": {
-    "superpowers-marketplace": {
-      "source": { "source": "github", "repo": "obra/superpowers-marketplace" }
-    },
     "sw-eng-doc-mastery": {
       "source": { "source": "github", "repo": "mcoquet/sw_eng_doc_mastery" }
     }
   },
   "enabledPlugins": {
-    "superpowers@superpowers-marketplace": true,
+    "superpowers@sw-eng-doc-mastery": true,
     "doc-mastery@sw-eng-doc-mastery": true
   }
 }
 ```
+
+Superpowers comes from the `sw-eng-doc-mastery` marketplace, which lists the upstream plugin
+so it installs as a dependency. If the settings already enable
+`superpowers@superpowers-marketplace`, replace that entry with the one above and drop the
+`superpowers-marketplace` entry from `extraKnownMarketplaces` (unless another plugin from it
+is enabled). Tell the user that a copy installed from `superpowers-marketplace` would load
+twice, and that `claude plugin uninstall superpowers@superpowers-marketplace` removes it.
 
 ## 3. `CLAUDE.md`
 
@@ -99,7 +103,6 @@ Tell the user: Claude Code cloud sessions don't install plugins from a repo's
 setup script (this needs `mcoquet/sw_eng_doc_mastery` to be public):
 
 ```bash
-claude plugin marketplace add obra/superpowers-marketplace
 claude plugin marketplace add mcoquet/sw_eng_doc_mastery
 claude plugin install doc-mastery@sw-eng-doc-mastery
 ```

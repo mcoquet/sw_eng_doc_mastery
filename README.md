@@ -14,16 +14,15 @@ and ADRs current as the code changes.
 | `doc-mastery:domain-model` | `docs/domain-model.md`: concepts, relationships, invariants, lifecycles. |
 | `doc-mastery:c4-architecture` | C4 diagrams in Mermaid under `docs/architecture/`. Vendored from [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit). |
 | `/doc-mastery:setup-project` | Sets a repo up: settings, project `CLAUDE.md` sections, multi-repo split, migration from vendored copies. |
-| Dependency | `superpowers@superpowers-marketplace`, installed with it. |
+| Superpowers | Installed automatically as a dependency. This marketplace lists the upstream [obra/superpowers](https://github.com/obra/superpowers) plugin, unmodified, pinned to a release tag. |
 
 Precedence: the project's `CLAUDE.md` wins over the plugin's rules, which win over any skill.
 
 ## Install
 
-On your machine, once:
+On your machine, once (Superpowers comes with it):
 
 ```
-/plugin marketplace add obra/superpowers-marketplace
 /plugin marketplace add mcoquet/sw_eng_doc_mastery
 /plugin install doc-mastery@sw-eng-doc-mastery
 ```
@@ -35,15 +34,19 @@ Then, in each project, run `/doc-mastery:setup-project`. It commits this to
 {
   "env": { "SUPERPOWERS_DISABLE_TELEMETRY": "1" },
   "extraKnownMarketplaces": {
-    "superpowers-marketplace": { "source": { "source": "github", "repo": "obra/superpowers-marketplace" } },
     "sw-eng-doc-mastery": { "source": { "source": "github", "repo": "mcoquet/sw_eng_doc_mastery" } }
   },
   "enabledPlugins": {
-    "superpowers@superpowers-marketplace": true,
+    "superpowers@sw-eng-doc-mastery": true,
     "doc-mastery@sw-eng-doc-mastery": true
   }
 }
 ```
+
+**Already have Superpowers from `superpowers-marketplace`?** Then it would load twice. Remove
+that copy with `claude plugin uninstall superpowers@superpowers-marketplace`, and in project
+settings replace `superpowers@superpowers-marketplace` with `superpowers@sw-eng-doc-mastery`
+(`/doc-mastery:setup-project` does this).
 
 Teammates still run the `/plugin install` line once; repo settings enable a plugin but don't
 install it.
@@ -54,7 +57,6 @@ Cloud sessions don't install plugins from a repo's settings. Add this to the clo
 environment's setup script instead (requires this repo to be public):
 
 ```bash
-claude plugin marketplace add obra/superpowers-marketplace
 claude plugin marketplace add mcoquet/sw_eng_doc_mastery
 claude plugin install doc-mastery@sw-eng-doc-mastery
 ```
@@ -78,5 +80,6 @@ plugins/doc-mastery/
 
 ## Licences
 
-The vendored skills keep their upstream MIT licences (`LICENSE` in each skill folder) and
+Superpowers is MIT licensed by Jesse Vincent and is fetched from its own repo, not copied
+here. The vendored skills keep their upstream MIT licences (`LICENSE` in each skill folder) and
 record their upstream commit in `SOURCE.md`.

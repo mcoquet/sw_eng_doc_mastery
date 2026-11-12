@@ -18,5 +18,10 @@ This repo is a Claude Code plugin marketplace (`sw-eng-doc-mastery`) holding one
   there, not in `marketplace.json`.
 - **Vendored skills** (`c4-architecture`, `domain-modeling`) stay unmodified. Each has a
   `SOURCE.md` with the upstream commit and how to update; overrides go in the rules file.
+- **Superpowers pin:** the `superpowers` entry in `marketplace.json` installs the upstream
+  repo at a release tag (`ref`). To move it, check the new tag's release notes against the
+  rules file (skill names, ledger path, worktree skill), update `ref`, and bump the
+  `doc-mastery` version in the same commit. `doc-mastery` depends on it by bare name
+  (`"superpowers"`), which resolves in this marketplace.
 - **Names are public API:** the marketplace name, plugin name and skill names appear in
   users' settings and commands. Don't rename them without a migration note in `README.md`.
