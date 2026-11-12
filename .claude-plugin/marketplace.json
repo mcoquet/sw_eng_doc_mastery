@@ -28,6 +28,28 @@
       },
       "description": "Superpowers by Jesse Vincent (obra/superpowers), listed here unmodified so doc-mastery can install it as a dependency.",
       "category": "development"
+    },
+    {
+      "name": "c4-architecture",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/softaworks/agent-toolkit.git",
+        "path": "skills/c4-architecture",
+        "sha": "3027f20f3181758385a1bb8c022d4041dfb4de84"
+      },
+      "description": "C4 architecture diagrams in Mermaid, by softaworks (softaworks/agent-toolkit), fetched unmodified at a pinned commit.",
+      "category": "development"
+    },
+    {
+      "name": "domain-modeling",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/mattpocock/skills.git",
+        "path": "skills/engineering/domain-modeling",
+        "sha": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d"
+      },
+      "description": "Glossary and ADR discipline, by Matt Pocock (mattpocock/skills), this one skill only, fetched unmodified at a pinned commit.",
+      "category": "development"
     }
   ]
 }

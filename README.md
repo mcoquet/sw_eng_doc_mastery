@@ -10,11 +10,16 @@ and ADRs current as the code changes.
 | Part | What it does |
 |---|---|
 | Workflow rules (`rules/workflow-rules.md`) | Loaded into every session by a `SessionStart` hook. When and where each living document is updated, the setup-and-test-commands gate, spec and plan locations, the Documentation impact / drift check steps, worktree policy for cloud sessions. |
-| `doc-mastery:domain-modeling` | Glossary (`GLOSSARY.md`) and ADRs (`docs/adr/`). Vendored from [mattpocock/skills](https://github.com/mattpocock/skills). |
 | `doc-mastery:domain-model` | `docs/domain-model.md`: concepts, relationships, invariants, lifecycles. |
-| `doc-mastery:c4-architecture` | C4 diagrams in Mermaid under `docs/architecture/`. Vendored from [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit). |
 | `/doc-mastery:setup-project` | Sets a repo up: settings, project `CLAUDE.md` sections, multi-repo split, migration from vendored copies. |
-| Superpowers | Installed automatically as a dependency. This marketplace lists the upstream [obra/superpowers](https://github.com/obra/superpowers) plugin, unmodified, pinned to a release tag. |
+| `domain-modeling:domain-modeling` | Glossary (`GLOSSARY.md`) and ADRs (`docs/adr/`). From [mattpocock/skills](https://github.com/mattpocock/skills). |
+| `c4-architecture:c4-architecture` | C4 diagrams in Mermaid under `docs/architecture/`. From [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit). |
+| `superpowers:*` | The [Superpowers](https://github.com/obra/superpowers) workflow skills. |
+
+Only `doc-mastery` lives in this repo. The other three are installed automatically as its
+dependencies: this marketplace lists them, fetched unmodified from their upstream repos and
+pinned (Superpowers to a release tag, the two skills to a commit, one folder each), so
+nothing is copied here and installs are reproducible.
 
 Precedence: the project's `CLAUDE.md` wins over the plugin's rules, which win over any skill.
 
@@ -71,15 +76,16 @@ changes. Third-party marketplaces don't auto-update by default: run
 
 ```
 .claude-plugin/marketplace.json      marketplace "sw-eng-doc-mastery"
+                                     also lists superpowers, c4-architecture, domain-modeling (upstream)
 plugins/doc-mastery/
-├── .claude-plugin/plugin.json       plugin manifest, depends on Superpowers
+├── .claude-plugin/plugin.json       plugin manifest and its dependencies
 ├── hooks/hooks.json                 SessionStart: print rules/workflow-rules.md
 ├── rules/workflow-rules.md          the always-on rules
-└── skills/                          c4-architecture, domain-model, domain-modeling, setup-project
+└── skills/                          domain-model, setup-project
 ```
 
 ## Licences
 
-Superpowers is MIT licensed by Jesse Vincent and is fetched from its own repo, not copied
-here. The vendored skills keep their upstream MIT licences (`LICENSE` in each skill folder) and
-record their upstream commit in `SOURCE.md`.
+Superpowers (Jesse Vincent), `c4-architecture` (softaworks) and `domain-modeling` (Matt
+Pocock) are MIT licensed by their authors and fetched from their own repos at install time;
+nothing of theirs is copied into this repo.
