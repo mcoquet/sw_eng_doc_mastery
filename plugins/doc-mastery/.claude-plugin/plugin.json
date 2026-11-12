@@ -1,0 +1,13 @@
+{
+  "name": "doc-mastery",
+  "version": "0.1.0",
+  "description": "Superpowers workflow with living documentation: always-on rules for when and where to keep GLOSSARY.md, the domain model, C4 diagrams and ADRs current, plus the skills that write them.",
+  "author": {
+    "name": "Miguel Coquet",
+    "url": "https://github.com/mcoquet"
+  },
+  "homepage": "https://github.com/mcoquet/sw_eng_doc_mastery",
+  "repository": "https://github.com/mcoquet/sw_eng_doc_mastery",
+  "keywords": ["superpowers", "documentation", "c4", "adr", "glossary", "domain-model"],
+  "dependencies": ["superpowers@superpowers-marketplace"]
+}

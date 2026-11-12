@@ -1,0 +1,18 @@
+{
+  "name": "sw-eng-doc-mastery",
+  "owner": {
+    "name": "Miguel Coquet",
+    "url": "https://github.com/mcoquet"
+  },
+  "description": "Superpowers-based development workflow with living documentation: glossary, domain model, C4 architecture and ADRs.",
+  "allowCrossMarketplaceDependenciesOn": ["superpowers-marketplace"],
+  "plugins": [
+    {
+      "name": "doc-mastery",
+      "source": "./plugins/doc-mastery",
+      "description": "Always-on workflow rules plus C4, domain-model and domain-modeling skills, on top of Superpowers.",
+      "category": "development",
+      "tags": ["superpowers", "documentation", "c4", "adr", "ddd"]
+    }
+  ]
+}
