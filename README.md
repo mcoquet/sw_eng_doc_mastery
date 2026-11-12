@@ -72,6 +72,16 @@ The plugin is versioned (`version` in `plugin.json`), so installs only update wh
 changes. Third-party marketplaces don't auto-update by default: run
 `/plugin marketplace update sw-eng-doc-mastery`, or turn auto-update on in `/plugin`.
 
+### Upstream update checks
+
+A scheduled GitHub Action (`.github/workflows/check-upstreams.yml`, Mondays 07:17 UTC, or run
+it by hand from the Actions tab) checks each pinned upstream for a newer release tag or for
+new commits in the pinned folder. For each one it opens an issue labelled `upstream-update`
+with the commits, the diff, a check for files a plugin would auto-load, and the exact steps
+to move the pin. It never changes the pins itself. A version that was already raised, even in
+an issue closed as not planned, isn't raised again; if upstream moves again while an issue is
+open, that issue is updated.
+
 ## Layout
 
 ```
@@ -82,6 +92,8 @@ plugins/doc-mastery/
 ├── hooks/hooks.json                 SessionStart: print rules/workflow-rules.md
 ├── rules/workflow-rules.md          the always-on rules
 └── skills/                          domain-model, setup-project
+.github/workflows/check-upstreams.yml  weekly upstream check
+.github/scripts/check_upstreams.py     the check (stdlib Python + git + gh)
 ```
 
 ## Licences

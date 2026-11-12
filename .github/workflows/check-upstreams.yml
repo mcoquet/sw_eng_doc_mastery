@@ -1,0 +1,30 @@
+name: Check upstream plugins
+
+# Weekly check of the upstream plugins pinned in .claude-plugin/marketplace.json
+# (superpowers, c4-architecture, domain-modeling). Opens an `upstream-update` issue per
+# plugin with a newer version; see .github/scripts/check_upstreams.py.
+
+on:
+  schedule:
+    - cron: "17 7 * * 1" # Mondays 07:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: check-upstreams
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check upstreams and open issues
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 .github/scripts/check_upstreams.py
