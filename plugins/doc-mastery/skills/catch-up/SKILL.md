@@ -25,8 +25,12 @@ it in the middle of other work: run it on its own branch and in its own PR.
 ## 1. Preconditions
 
 - `CLAUDE.md` should have the sections `setup-project` adds (`## Methodology`,
-  `## Setup and test commands`). If it doesn't, ask the user to run
-  `/doc-mastery:setup-project` first, then continue.
+  `## Setup and test commands`). If it doesn't, carry on through the report (steps 2 to 4
+  only read), say so in the report, and ask the user to run `/doc-mastery:setup-project`
+  before anything is written.
+- Check `git rev-parse --is-shallow-repository`. In a shallow clone the history is not
+  there to read; fetch more (`git fetch --depth=500`) or say in the report that commit
+  history was not available as evidence for decisions.
 - Read the project's `CLAUDE.md` for overrides. They win: different doc locations, a
   multi-repo split. In a non-primary repo of a multi-repo project, catch up only what that
   repo owns (its own ADRs and internal diagrams) and report, rather than write, anything
@@ -47,7 +51,11 @@ and whatever it is called:
 | `ARCHITECTURE.md` | "Project structure"/"Code layout" sections in README or CONTRIBUTING |
 
 Also note `docs/superpowers/specs/` and `plans/`: they are history, useful as evidence, and
-are never edited.
+are never edited. Documents with other jobs (requirements, runbooks, status pages) stay
+where they are; read them as evidence of intent, and link to them where useful.
+
+Read the other agent instruction files too (`AGENTS.md`, `.cursor/rules/`, and the like).
+Where they contradict `CLAUDE.md` or the code, that goes in the report.
 
 ## 3. Scan the code
 
@@ -65,6 +73,14 @@ keep the conclusions, not the file contents.
 | `ARCHITECTURE.md` | top-level directories, module boundaries, entry points, shared libraries, cross-cutting code (auth, logging, errors, config) | code map; architectural invariants; cross-cutting concerns |
 | Commands | manifests' scripts, Makefile/justfile/taskfile, CI config, CONTRIBUTING | install, test (all and single), lint/format |
 
+Where development and production differ (a local compose file next to a deploy one, SQLite
+locally and Postgres deployed), the diagrams show production; note the differences in
+`ARCHITECTURE.md`.
+
+For every capability the existing documents claim (access checks, anonymisation, audit
+logging, sync), find the code that does it. Existing docs in a codebase that has never
+had living documentation often describe the plan, not the system.
+
 Ignore vendored, generated and dependency directories. Stay at the level each document
 works at: containers are things that are deployed or run separately, not folders; the
 glossary and domain model hold domain concepts, not `UserController` or `BaseRepository`.
@@ -78,8 +94,13 @@ Before writing anything, show the user one report:
   convert it, or leave it and link to it).
 - **What you would write:** the containers and externals found, the candidate terms, the
   concepts and relationships, the candidate ADRs with the evidence for each.
-- **Contradictions:** where an existing document and the code disagree, or two parts of
-  the code do. Don't silently pick one.
+- **Claimed but not built:** what the existing documents say the system does and the code
+  does not, or only partly. Put anything that bears on security or privacy first. The
+  living documents will describe what the code does (a proxy that "forwards requests",
+  not one that "authorises" them, if it has no check); say so here, so nobody is
+  surprised by what the diagrams show.
+- **Contradictions:** where an existing document and the code disagree in other ways, or
+  two parts of the code do. Don't silently pick one.
 - **Questions only the user can answer**, batched and specific: which of two synonyms is
   canonical; what a term means where the code is ambiguous; whether something that looks
   unused is live; why a surprising choice was made. Ask about the things that change what
@@ -116,6 +137,10 @@ and follow its format; the workflow rules say where files go.
    the system view. Add its update triggers to `CLAUDE.md`.
 6. **`CLAUDE.md`**: fill `## Setup and test commands` with commands you ran and saw work,
    and add any override this run settled (for example a doc location the user chose to keep).
+
+Planned or half-built things are not written as if they exist. Where a gap would mislead
+by its silence, state the current behaviour plainly in the document ("requests are
+forwarded without an access check") and link to the issue that tracks it if there is one.
 
 When an existing document is current and in the right place, leave it alone. When it is
 stale, correct it rather than rewriting it; keep the author's structure where it fits the
