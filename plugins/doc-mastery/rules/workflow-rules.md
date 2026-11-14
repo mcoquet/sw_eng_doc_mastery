@@ -56,13 +56,17 @@ spans several repos may keep these in one primary repo; its `CLAUDE.md` says whe
 - **C4 components / deployment / dynamic:** a container with a component diagram changes
   internally; an environment or its infrastructure changes; a flow that has a dynamic
   diagram changes. Create these only when the design calls for one.
-- **ADR:** a decision passes all three tests: hard to reverse, surprising without context,
-  the result of a real trade-off.
+- **ADR:** a decision is settled (an approved design doc, a ruling during implementation,
+  or a choice already built) and passes all three tests: hard to reverse, surprising without context, the result of a
+  real trade-off.
 
 ### When, in the Superpowers workflow
 
 1. **Brainstorming:** use `domain-modeling` and `domain-model` alongside `brainstorming`.
-   Record terms in `GLOSSARY.md` as they're resolved; qualifying decisions become ADRs.
+   Record terms in `GLOSSARY.md` as they're resolved. Write no ADR yet: until the design doc
+   is approved a choice is still a proposal, and the doc's Approaches part holds the
+   reasoning. Where `domain-modeling` would offer an ADR, list it as a candidate under
+   Documentation impact instead.
    Every design doc ends with a `## Documentation impact` section listing, for each document
    above, what changes or "none". Proposed C4 and domain-model diagrams go **in the design
    doc**; `docs/architecture/` and `docs/domain-model.md` show only what is built.
@@ -70,6 +74,8 @@ spans several repos may keep these in one primary repo; its `CLAUDE.md` says whe
    explicit task, after the implementation tasks it depends on, to update that document. Its
    verification step: the document matches the code as built, and changed C4 diagrams pass
    the checklist at the end of the `c4-architecture` skill's `references/common-mistakes.md`.
+   ADR tasks are the exception: the decision was made when the design was approved, so they
+   come first, and their check is that the ADR states the decision as approved.
    Doc updates thus get the same per-task and final review as code. A design doc written
    before these rules has no Documentation impact section: don't add one (specs are never
    updated); the plan lists the doc tasks itself.
