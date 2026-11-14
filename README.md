@@ -12,6 +12,7 @@ and ADRs current as the code changes.
 | Workflow rules (`rules/workflow-rules.md`) | Loaded into every session by a `SessionStart` hook. When and where each living document is updated, the setup-and-test-commands gate, spec and plan locations, the Documentation impact / drift check steps, worktree policy for cloud sessions. |
 | `doc-mastery:domain-model` | `docs/domain-model.md`: concepts, relationships, invariants, lifecycles. |
 | `/doc-mastery:setup-project` | Sets a repo up: settings, project `CLAUDE.md` sections, multi-repo split, migration from vendored copies. |
+| `/doc-mastery:catch-up` | For a project that already has code: scans it, reports which living documents are missing, stale or misplaced, then writes them to match the system as built. Run again later as a drift audit. |
 | `domain-modeling:domain-modeling` | Glossary (`GLOSSARY.md`) and ADRs (`docs/adr/`). From [mattpocock/skills](https://github.com/mattpocock/skills). |
 | `c4-architecture:c4-architecture` | C4 diagrams in Mermaid under `docs/architecture/`. From [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit). |
 | `superpowers:*` | The [Superpowers](https://github.com/obra/superpowers) workflow skills. |
@@ -47,6 +48,11 @@ Then, in each project, run `/doc-mastery:setup-project`. It commits this to
   }
 }
 ```
+
+**Project already has code?** Run `/doc-mastery:catch-up` next, on its own branch. It reads
+the code and any existing docs, shows you the gap and asks what only you can answer (what
+terms mean, why choices were made), then writes the glossary, domain model, C4 diagrams,
+ADRs and `ARCHITECTURE.md`. It never changes code.
 
 **Already have Superpowers from `superpowers-marketplace`?** Then it would load twice. Remove
 that copy with `claude plugin uninstall superpowers@superpowers-marketplace`, and in project
@@ -91,7 +97,7 @@ plugins/doc-mastery/
 ├── .claude-plugin/plugin.json       plugin manifest and its dependencies
 ├── hooks/hooks.json                 SessionStart: print rules/workflow-rules.md
 ├── rules/workflow-rules.md          the always-on rules
-└── skills/                          domain-model, setup-project
+└── skills/                          catch-up, domain-model, setup-project
 .github/workflows/check-upstreams.yml  weekly upstream check
 .github/scripts/check_upstreams.py     the check (stdlib Python + git + gh)
 ```

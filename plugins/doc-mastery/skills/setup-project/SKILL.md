@@ -96,7 +96,14 @@ in the Superpowers workflow", "C4 conventions", "Worktrees"), they now come from
 and would load twice. Show the user what would go, and on their OK remove the vendored skill
 folders and the restated rules. Keep anything project-specific, rewritten as an override.
 
-## 5. Cloud sessions
+## 5. Existing code
+
+If the repo already has source code and is missing any of the living documents
+(`GLOSSARY.md`, `docs/domain-model.md`, `docs/architecture/`, `docs/adr/`,
+`ARCHITECTURE.md`), tell the user that `/doc-mastery:catch-up` scans the project and writes
+them to match the system as built, and that it is best run next, on its own branch.
+
+## 6. Cloud sessions
 
 Tell the user: Claude Code cloud sessions don't install plugins from a repo's
 `.claude/settings.json`. To get them there, add these lines to the cloud environment's

@@ -39,7 +39,9 @@ the system **as it is now** and must be kept current:
 | `docs/adr/NNNN-<slug>.md` | Why a hard-to-reverse choice was made | `domain-modeling` |
 
 Create each lazily, when there is first something to write. They link to each other rather
-than restating each other. ADRs go in `docs/adr/` (not `docs/decisions/`). A project that
+than restating each other. A project that already has code but lacks these documents, or
+whose documents have drifted well behind it, is brought level with the `catch-up` skill
+(docs only, own branch, no design doc or plan needed); suggest it when you notice. ADRs go in `docs/adr/` (not `docs/decisions/`). A project that
 spans several repos may keep these in one primary repo; its `CLAUDE.md` says where.
 
 ### What counts as a change
