@@ -1,6 +1,7 @@
 {
   "name": "doc-mastery",
-  "version": "0.5.0",
+  "version": "0.5.1",
+  "license": "MIT",
   "description": "Superpowers workflow with living documentation: always-on rules for when and where to keep GLOSSARY.md, the domain model, C4 diagrams and ADRs current, plus the skills that write them.",
   "author": {
     "name": "Miguel Coquet",

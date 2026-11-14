@@ -107,3 +107,6 @@ plugins/doc-mastery/
 Superpowers (Jesse Vincent), `c4-architecture` (softaworks) and `domain-modeling` (Matt
 Pocock) are MIT licensed by their authors and fetched from their own repos at install time;
 nothing of theirs is copied into this repo.
+
+This repo's own content (the `doc-mastery` plugin, its rules and skills, and the upstream
+check script) is MIT licensed; see `LICENSE`.
