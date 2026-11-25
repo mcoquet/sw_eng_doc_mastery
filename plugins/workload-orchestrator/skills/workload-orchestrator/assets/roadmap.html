@@ -322,7 +322,7 @@ function renderPipeline() {
   var row = function (cls, name, h, e, tail) {
     return '<dt><i class="' + cls + '"></i>' + name + '</dt><dd>' + tail + '</dd><dd class="n">' + hrs(h) + (e != null ? ' · ~' + hrs(e) + ' elapsed' : '') + '</dd>';
   };
-  el.innerHTML = '<div class="head"><b>' + hrs(hNow + hNext + hLater) + ' of worker work to go</b><span>' + done.length + ' done this round</span></div>' +
+  el.innerHTML = '<div class="head"><b>' + hrs(hNow + hNext + hLater) + ' of work to go</b><span>' + done.length + ' done this round</span></div>' +
     '<div class="bar" role="img" aria-label="' + esc(hrs(hDone) + ' done, ' + hrs(hNow) + ' Now, ' + hrs(hNext) + ' Next, ' + hrs(hLater) + ' Later') + '">' +
     (hDone ? '<i class="seg-done" style="width:' + pct(hDone) + '"></i>' : '') +
     (hNow ? '<i class="seg-now" style="width:' + pct(hNow) + '"></i>' : '') +
