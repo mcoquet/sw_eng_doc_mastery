@@ -1,0 +1,477 @@
+<title>__PROJECT__ Roadmap</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one phone-width column; sticky Now/Next/Later switcher; cards stack, details fold open. */
+:root {
+  --bg: #f5f7f8; --surface: #ffffff; --ink: #14212b; --muted: #5b6b77; --line: #dbe2e7;
+  --accent: #0f7c80; --accent-soft: #dcefef;
+  --crit: #b4232c; --crit-soft: #fbe5e6; --high: #b25b06; --high-soft: #fbeedd;
+  --med: #3b5c8f; --med-soft: #e3eaf6; --low: #5b6b77; --low-soft: #eceff2;
+  --warn-bg: #fff6e0; --warn-ink: #7a5200;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f161b; --surface: #172129; --ink: #e5ecf0; --muted: #94a5b1; --line: #2a3843;
+  --accent: #4fb8bb; --accent-soft: #173a3c;
+  --crit: #f07a80; --crit-soft: #3d1b1e; --high: #f0a75a; --high-soft: #3a2914;
+  --med: #8fb0e6; --med-soft: #1d2a40; --low: #a3b1bb; --low-soft: #222d35;
+  --warn-bg: #3a2f14; --warn-ink: #f1cf7a; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0f161b; --surface: #172129; --ink: #e5ecf0; --muted: #94a5b1; --line: #2a3843;
+  --accent: #4fb8bb; --accent-soft: #173a3c;
+  --crit: #f07a80; --crit-soft: #3d1b1e; --high: #f0a75a; --high-soft: #3a2914;
+  --med: #8fb0e6; --med-soft: #1d2a40; --low: #a3b1bb; --low-soft: #222d35;
+  --warn-bg: #3a2f14; --warn-ink: #f1cf7a; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--font-body); margin: 0; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 640px; margin: 0 auto; padding-block: 20px 120px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header h1 { font-size: 22px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+.sub { color: var(--muted); margin: 4px 0 0; font-size: 14px; }
+.tabs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 12px 10px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.tab.hot small { color: var(--crit); font-weight: 600; }
+.tab.hot[aria-selected="true"] small { color: #fff; }
+.dcard { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--high); border-radius: 12px; padding: 14px; display: grid; gap: 10px; }
+.dcard.now { border-left-color: var(--crit); }
+.dcard.ready { box-shadow: 0 0 0 2px var(--accent) inset; }
+.dcard .ttl { font-size: 15.5px; }
+.ctx { font-size: 14px; white-space: pre-line; margin: 0; }
+.links { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 13px var(--font-data); }
+.links a { color: var(--accent); }
+.opts { display: grid; gap: 8px; }
+.opt { appearance: none; display: flex; gap: 10px; align-items: flex-start; text-align: left; width: 100%; font: inherit; color: inherit; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 12px; cursor: pointer; min-height: 48px; }
+.opt[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.dot { flex: none; width: 16px; height: 16px; margin-top: 2px; border-radius: 50%; border: 2px solid var(--muted); }
+.opt[aria-pressed="true"] .dot { border-color: var(--accent); background: var(--accent); }
+.olbl { font-weight: 600; display: block; }
+.odet { display: block; color: var(--muted); font-size: 13.5px; }
+.orec { font: 600 11px var(--font-body); letter-spacing: .05em; text-transform: uppercase; color: var(--accent); margin-left: 6px; }
+textarea { width: 100%; min-height: 44px; font: 15px var(--font-body); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; resize: vertical; }
+textarea:focus-visible, .opt:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.mini { display: grid; gap: 8px; font-size: 14px; }
+.mini .it { border-top: 1px solid var(--line); padding-top: 8px; }
+.mini .res { color: var(--muted); display: block; }
+.fold { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-top: 14px; }
+.fold summary { cursor: pointer; font-weight: 600; min-height: 32px; }
+a.chip { text-decoration: none; }
+.pipe { margin-top: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: grid; gap: 8px; }
+.pipe .head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.pipe .head b { font-size: 15px; }
+.pipe .head span { font: 500 13px var(--font-data); color: var(--muted); }
+.bar { display: flex; height: 14px; border-radius: 999px; overflow: hidden; background: var(--low-soft); }
+.bar i { display: block; height: 100%; min-width: 3px; }
+.seg-done { background: var(--accent); }
+.seg-now { background: var(--accent); opacity: .7; }
+.seg-next { background: var(--accent); opacity: .42; }
+.seg-later { background: var(--accent); opacity: .2; }
+.pipe dl { margin: 0; display: grid; grid-template-columns: auto 1fr auto; gap: 4px 10px; font-size: 13.5px; align-items: center; }
+.pipe dt { display: flex; align-items: center; gap: 6px; }
+.pipe dt i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.pipe dd { margin: 0; color: var(--muted); }
+.pipe dd.n { font-family: var(--font-data); color: var(--ink); text-align: right; white-space: nowrap; }
+.pipe .note { font-size: 12px; color: var(--muted); margin: 0; }
+.tab { appearance: none; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 10px; padding: 10px 6px; font: 600 15px/1.2 var(--font-body); cursor: pointer; min-height: 48px; }
+.tab small { display: block; font: 500 12px/1.3 var(--font-data); color: var(--muted); margin-top: 2px; }
+.tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.tab[aria-selected="true"] small { color: #fff; opacity: .85; }
+.tab:focus-visible, button:focus-visible, summary:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.intro { color: var(--muted); font-size: 14px; margin: 4px 0 14px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-bottom: 14px; }
+.panel h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 8px; font-weight: 600; }
+.panel ol, .panel ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.panel p { margin: 6px 0 0; }
+.cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.card.done { opacity: .6; }
+.card summary { list-style: none; cursor: pointer; padding: 12px 14px; display: grid; gap: 6px; }
+.card summary::-webkit-details-marker { display: none; }
+.top { display: flex; gap: 8px; align-items: baseline; }
+.nums { font: 500 13px var(--font-data); color: var(--accent); white-space: nowrap; }
+.nums a { color: inherit; }
+.ttl { font-weight: 600; min-width: 0; }
+.ord { font: 500 12px var(--font-data); color: var(--muted); margin-left: auto; white-space: nowrap; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 12px/1 var(--font-data); padding: 5px 8px; border-radius: 999px; background: var(--low-soft); color: var(--low); white-space: nowrap; }
+.chip.critical { background: var(--crit-soft); color: var(--crit); }
+.chip.high { background: var(--high-soft); color: var(--high); }
+.chip.medium { background: var(--med-soft); color: var(--med); }
+.chip.status { background: var(--accent-soft); color: var(--accent); }
+.chip.dec { background: var(--warn-bg); color: var(--warn-ink); }
+.body { padding: 0 14px 14px; display: grid; gap: 8px; font-size: 14px; }
+.body dl { margin: 0; display: grid; grid-template-columns: 7.5em 1fr; gap: 4px 10px; }
+.body dt { color: var(--muted); }
+.body dd { margin: 0; min-width: 0; }
+.rec { border-left: 3px solid var(--accent); padding-left: 10px; }
+.actions { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 14px; }
+.btn { appearance: none; border: 1px solid var(--line); background: var(--bg); color: var(--ink); border-radius: 8px; padding: 0 14px; min-height: 44px; font: 500 14px var(--font-body); cursor: pointer; }
+.btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn:disabled { opacity: .5; cursor: default; }
+.btn.icon { padding: 0; width: 44px; font-family: var(--font-data); }
+.warn { background: var(--warn-bg); color: var(--warn-ink); border-radius: 10px; padding: 10px 12px; font-size: 14px; }
+.workers { display: grid; gap: 8px; }
+.worker { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.worker b { font-family: var(--font-data); font-weight: 500; }
+.worker .meta { color: var(--muted); font-size: 13px; }
+.empty { color: var(--muted); border: 1px dashed var(--line); border-radius: 12px; padding: 18px 14px; text-align: center; }
+.map svg { width: 100%; height: auto; display: block; }
+.sendbar { position: fixed; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 1px solid var(--line); padding-block: 10px calc(10px + env(safe-area-inset-bottom, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; gap: 10px; align-items: center; z-index: 6; }
+.sendbar .msg { flex: 1; min-width: 0; font-size: 13px; color: var(--muted); }
+.sendbar .msg.err { color: var(--crit); }
+.legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: var(--muted); margin-top: 6px; }
+@media (prefers-reduced-motion: no-preference) { .card { transition: opacity .2s; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>__PROJECT__ Roadmap</h1>
+    <p class="sub" id="summary">Loading the plan…</p>
+    <section class="pipe" id="pipeline" aria-label="Work left in the pipeline" hidden></section>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Views">
+    <button class="tab" role="tab" id="tab-decide" data-col="decide" aria-selected="false">Decide<small id="cnt-decide">–</small></button>
+    <button class="tab" role="tab" id="tab-now" data-col="now" aria-selected="true">Now<small id="cnt-now">–</small></button>
+    <button class="tab" role="tab" id="tab-next" data-col="next" aria-selected="false">Next<small id="cnt-next">–</small></button>
+    <button class="tab" role="tab" id="tab-later" data-col="later" aria-selected="false">Later<small id="cnt-later">–</small></button>
+  </nav>
+
+  <main id="view"><div class="empty">The plan loads from the roadmap's database. If nothing appears, it hasn't been filled in yet.</div></main>
+</div>
+
+<div class="sendbar" id="sendbar" hidden>
+  <span class="msg" id="status"></span>
+  <button class="btn primary" id="send" type="button">Send to Claude</button>
+</div>
+
+<script>
+var COLS = { now: 'Now', next: 'Next', later: 'Later' };
+var INTRO = {
+  now: 'What the current round is building. Each worker opens one PR; Claude merges it once tests and QA pass.',
+  next: 'Your picks for the next round, in the order you want them. Claude plans the workers underneath and starts them when Now clears.',
+  later: 'Everything else. The map shows importance against effort, so quick wins stand out.'
+};
+var IMP = { critical: 4, high: 3, medium: 2, low: 1 };
+// Deadline chips: add your project's tags here; any other tag shows as 'before <tag>'.
+var DEADLINE = { deploy: 'before deploy', none: '' };
+var STATUS = { running: 'worker running', pr: 'PR ready', waiting: 'waiting on others', merged: 'merged' };
+var GH = 'https://github.com/__REPO__/'; // owner/name, for issue and PR links
+
+var items = {};      // decisions waiting on the human (written by Claude)
+var answers = {};    // his submitted answers (written from this page)
+var drafts = {};     // answers picked but not yet sent (this page only)
+var PRI = { now: 0, soon: 1, later: 2 };
+INTRO.decide = 'Questions only you can answer. Pick an option or write a note, then send. Each one says what it blocks and what happens if you don\'t answer by its deadline.';
+var cards = {};      // id -> card (written by Claude)
+var place = {};      // id -> {col, order} (written from this page)
+var meta = {};       // plan/recommendation (written by Claude)
+var col = 'now';
+var db = null, comments = null, sentAt = null, dirty = false;
+
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function issueLinks(ns) { return (ns || []).map(function (n) { n = parseInt(n, 10); return isFinite(n) ? '<a href="' + GH + 'issues/' + n + '">#' + n + '</a>' : ''; }).join(' '); }
+function label(c) { return (c.n || []).map(function (n) { return '#' + n; }).join('/') + ' ' + (c.title || ''); }
+function colOf(id) { var p = place[id]; return (p && COLS[p.col]) ? p.col : ((cards[id] && COLS[cards[id].col]) ? cards[id].col : 'later'); }
+function orderOf(id) { var p = place[id]; return (p && typeof p.order === 'number') ? p.order : ((cards[id] && cards[id].order) || 999); }
+function inCol(c) { return Object.keys(cards).filter(function (id) { return colOf(id) === c && cards[id].status !== 'merged'; }).sort(function (a, b) { return orderOf(a) - orderOf(b) || (IMP[cards[b].importance] || 0) - (IMP[cards[a].importance] || 0); }); }
+function hrs(h) { h = Number(h) || 0; return (h % 1 ? h.toFixed(1) : h) + 'h'; }
+
+// Worker plan for Next: cards sharing an area run in one worker, in order; a card waits for what it's blocked by.
+function workerPlan(ids) {
+  var workers = [], end = {}, warnings = [], nowIds = inCol('now');
+  ids.forEach(function (id) {
+    var c = cards[id], areas = c.areas || [];
+    var worker = workers.filter(function (l) { return l.areas.some(function (a) { return areas.indexOf(a) !== -1; }); })[0];
+    if (!worker) { worker = { ids: [], areas: [], end: 0, notes: [] }; workers.push(worker); }
+    var start = worker.end;
+    (c.blockedBy || []).forEach(function (dep) {
+      if (!cards[dep] || cards[dep].status === 'merged') return;
+      var dc = colOf(dep);
+      if (dc === 'next' && end[dep] != null) start = Math.max(start, end[dep]);
+      else if (dc === 'next') warnings.push(label(c) + ' is above ' + label(cards[dep]) + ', which it depends on. Move it below.');
+      else if (dc === 'now') worker.notes.push('starts after ' + label(cards[dep]) + ' merges');
+      else warnings.push(label(c) + ' depends on ' + label(cards[dep]) + ', which is still in Later. Move that to Next too, or this waits.');
+    });
+    nowIds.forEach(function (nid) {
+      var shared = (cards[nid].areas || []).filter(function (a) { return areas.indexOf(a) !== -1; });
+      if (shared.length && (c.blockedBy || []).indexOf(nid) === -1) worker.notes.push('touches the same code as ' + label(cards[nid]) + ' (' + shared.join(', ') + '); merges main in after it lands');
+    });
+    if (c.decisions > 0) warnings.push(label(c) + ' needs ' + c.decisions + ' decision' + (c.decisions > 1 ? 's' : '') + ' from you before it can be built. Its worker starts with a design pass and sends them to your inbox.');
+    if (c.status === 'waiting') warnings.push(label(c) + ' is waiting on someone outside the team: ' + (c.waitingOn || 'see the ticket') + '.');
+    end[id] = start + (Number(c.hours) || 0);
+    worker.end = end[id]; worker.ids.push(id);
+    areas.forEach(function (a) { if (worker.areas.indexOf(a) === -1) worker.areas.push(a); });
+  });
+  var total = workers.reduce(function (m, l) { return Math.max(m, l.end); }, 0);
+  var work = ids.reduce(function (s, id) { return s + (Number(cards[id].hours) || 0); }, 0);
+  return { workers: workers, total: total, work: work, warnings: warnings };
+}
+
+function cardHtml(id, i, total) {
+  var c = cards[id], cur = colOf(id);
+  var chips = '<span class="chip ' + esc(c.importance) + '">' + esc(c.importance || '') + '</span>' +
+    '<span class="chip">' + esc(c.effort || '?') + ' · ' + esc(hrs(c.hours)) + '</span>' +
+    (c.deadline && DEADLINE[c.deadline] !== '' ? '<span class="chip">' + esc(DEADLINE[c.deadline] || ('before ' + String(c.deadline).replace(/-/g, ' '))) + '</span>' : '') +
+    (STATUS[c.status] ? '<span class="chip status">' + esc(STATUS[c.status]) + (c.pr ? ' #' + esc(c.pr) : '') + '</span>' : '') +
+    (openForCard(id) > 0 ? '<a class="chip dec" href="#decide" data-goto="decide">' + openForCard(id) + ' question' + (openForCard(id) > 1 ? 's' : '') + ' for you</a>'
+      : (c.decisions > 0 && c.status === 'idle' ? '<span class="chip dec">needs ' + esc(c.decisions) + ' decision' + (c.decisions > 1 ? 's' : '') + '</span>' : ''));
+  var deps = function (list) { return (list || []).map(function (d) { return cards[d] ? esc(label(cards[d])) : esc(d); }).join('; ') || 'nothing'; };
+  var moves = Object.keys(COLS).map(function (k) { return '<button class="btn" type="button" data-move="' + k + '" data-id="' + esc(id) + '" aria-pressed="' + (k === cur) + '">' + COLS[k] + '</button>'; }).join('');
+  var arrows = cur === 'next' ? '<button class="btn icon" type="button" data-up="' + esc(id) + '" aria-label="Move up"' + (i === 0 ? ' disabled' : '') + '>↑</button><button class="btn icon" type="button" data-down="' + esc(id) + '" aria-label="Move down"' + (i === total - 1 ? ' disabled' : '') + '>↓</button>' : '';
+  var pr = c.pr ? ' · <a href="' + GH + 'pull/' + parseInt(c.pr, 10) + '">PR #' + esc(c.pr) + '</a>' : '';
+  var results = (typeof c.results === 'string' && /^https:\/\//.test(c.results)) ? ' · <a href="' + esc(c.results) + '">results</a>' : '';
+  return '<li class="card' + (c.status === 'merged' ? ' done' : '') + '"><details' + (c.open ? ' open' : '') + '>' +
+    '<summary><div class="top"><span class="nums">' + issueLinks(c.n) + '</span><span class="ttl">' + esc(c.title) + '</span>' +
+    (cur === 'next' ? '<span class="ord">' + (i + 1) + '</span>' : '') + '</div><div class="chips">' + chips + '</div></summary>' +
+    '<div class="body"><p>' + esc(c.problem) + pr + results + '</p>' +
+    '<dl><dt>Why it matters</dt><dd>' + esc(c.why) + '</dd>' +
+    '<dt>Effort</dt><dd>' + esc(c.effortNote || (c.effort + ', about ' + hrs(c.hours) + ' of worker time')) + '</dd>' +
+    '<dt>Blocked by</dt><dd>' + deps(c.blockedBy) + '</dd>' +
+    '<dt>Blocks</dt><dd>' + deps(c.blocks) + '</dd>' +
+    (c.decisions > 0 ? '<dt>Your input</dt><dd>' + esc(c.decisionsNote || (c.decisions + ' decisions')) + '</dd>' : '') +
+    '<dt>Touches</dt><dd>' + esc((c.areas || []).join(', ') || '—') + '</dd></dl>' +
+    (c.rec ? '<p class="rec"><strong>Claude recommends:</strong> ' + esc(c.rec) + '</p>' : '') + '</div></details>' +
+    '<div class="actions">' + moves + arrows + '</div></li>';
+}
+
+function mapHtml(ids) {
+  // Importance (up) against effort in worker-hours (right); Next cards filled, Later hollow.
+  var W = 340, H = 236, L = 34, R = 12, T = 14, B = 34, maxH = 4;
+  var x = function (h) { return L + Math.min(Number(h) || 0, maxH) / maxH * (W - L - R); };
+  var y = function (imp) { return T + (4 - (IMP[imp] || 1)) / 3 * (H - T - B); };
+  var used = {};
+  var dots = ids.map(function (id) {
+    var c = cards[id], cx = x(c.hours), cy = y(c.importance), k = Math.round(cx / 18) + ':' + c.importance;
+    var n = used[k] = (used[k] || 0) + 1; cy += (n - 1) * 15;
+    var nx = colOf(id) === 'next';
+    return '<g><circle cx="' + cx + '" cy="' + cy + '" r="5" fill="' + (nx ? 'var(--accent)' : 'var(--surface)') + '" stroke="var(--accent)" stroke-width="1.5"></circle>' +
+      '<text x="' + (cx + 8) + '" y="' + (cy + 4) + '" font-size="11" font-family="var(--font-data)" fill="var(--ink)">#' + esc((c.n || [])[0]) + '</text></g>';
+  }).join('');
+  var midX = x(2), midY = (T + H - B) / 2;
+  return '<div class="panel map"><h2>Importance against effort</h2><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Cards placed by importance and effort">' +
+    '<rect x="' + L + '" y="' + T + '" width="' + (midX - L) + '" height="' + (midY - T) + '" fill="var(--accent-soft)" opacity=".7"></rect>' +
+    '<line x1="' + midX + '" y1="' + T + '" x2="' + midX + '" y2="' + (H - B) + '" stroke="var(--line)"></line>' +
+    '<line x1="' + L + '" y1="' + midY + '" x2="' + (W - R) + '" y2="' + midY + '" stroke="var(--line)"></line>' +
+    '<rect x="' + L + '" y="' + T + '" width="' + (W - L - R) + '" height="' + (H - T - B) + '" fill="none" stroke="var(--line)"></rect>' +
+    '<text x="' + (L + 6) + '" y="' + (T + 14) + '" font-size="10.5" fill="var(--muted)">QUICK WINS</text>' +
+    '<text x="' + (W - R - 6) + '" y="' + (T + 14) + '" font-size="10.5" fill="var(--muted)" text-anchor="end">BIG BETS</text>' +
+    '<text x="' + (L + 6) + '" y="' + (H - B - 6) + '" font-size="10.5" fill="var(--muted)">FILL-INS</text>' +
+    '<text x="' + (W - R - 6) + '" y="' + (H - B - 6) + '" font-size="10.5" fill="var(--muted)" text-anchor="end">HARD TO JUSTIFY</text>' +
+    [1, 2, 3, 4].map(function (h) { return '<text x="' + x(h) + '" y="' + (H - B + 14) + '" font-size="10" fill="var(--muted)" text-anchor="middle" font-family="var(--font-data)">' + h + 'h</text>'; }).join('') +
+    '<text x="' + ((L + W - R) / 2) + '" y="' + (H - 4) + '" font-size="10.5" fill="var(--muted)" text-anchor="middle">worker-hours →</text>' +
+    '<text x="10" y="' + ((T + H - B) / 2) + '" font-size="10.5" fill="var(--muted)" text-anchor="middle" transform="rotate(-90 10 ' + ((T + H - B) / 2) + ')">importance →</text>' +
+    dots + '</svg><div class="legend"><span>● in Next</span><span>○ in Later</span></div></div>';
+}
+
+// ---- Decisions ----
+function openItems() { return Object.keys(items).filter(function (id) { return items[id].status !== 'done' && !answers[id]; }).sort(function (a, b) { return (PRI[items[a].priority] == null ? 3 : PRI[items[a].priority]) - (PRI[items[b].priority] == null ? 3 : PRI[items[b].priority]) || String(items[a].createdAt || '').localeCompare(String(items[b].createdAt || '')); }); }
+function sentItems() { return Object.keys(items).filter(function (id) { return items[id].status !== 'done' && answers[id]; }); }
+function doneItems() { return Object.keys(items).filter(function (id) { return items[id].status === 'done'; }).sort(function (a, b) { return String(items[b].doneAt || '').localeCompare(String(items[a].doneAt || '')); }); }
+function isReady(id) { var d = drafts[id]; return !!d && (!!d.choice || !!(d.note || '').trim()); }
+function readyIds() { return openItems().filter(isReady); }
+function optLabel(it, choice) { var o = (it.options || []).filter(function (o) { return o.id === choice; })[0]; return o ? o.label : choice; }
+function openForCard(cid) { return openItems().filter(function (id) { return items[id].card === cid; }).length; }
+function safeLinks(ls) { return (Array.isArray(ls) ? ls : []).filter(function (l) { return l && typeof l.url === 'string' && /^https:\/\//.test(l.url); }).map(function (l) { return '<a href="' + esc(l.url) + '">' + esc(l.label || l.url) + '</a>'; }).join(''); }
+function decisionHtml(id) {
+  var it = items[id], d = drafts[id] || {};
+  var opts = (it.options || []).map(function (o) {
+    return '<button class="opt" type="button" data-item="' + esc(id) + '" data-choice="' + esc(o.id) + '" aria-pressed="' + (d.choice === o.id) + '"><span class="dot"></span><span><span class="olbl">' + esc(o.label) +
+      (it.recommend === o.id ? '<span class="orec">Recommended</span>' : '') + '</span>' + (o.detail ? '<span class="odet">' + esc(o.detail) + '</span>' : '') + '</span></button>';
+  }).join('');
+  var card = it.card && cards[it.card] ? '<span class="chip">' + esc(label(cards[it.card])) + '</span>' : '';
+  return '<li class="dcard ' + esc(it.priority || '') + (isReady(id) ? ' ready' : '') + '"><div class="top"><span class="ttl">' + esc(it.title || id) + '</span></div>' +
+    '<div class="chips">' + (it.priority === 'now' ? '<span class="chip critical">answer now</span>' : '') + card + (isReady(id) ? '<span class="chip status">ready to send</span>' : '') + '</div>' +
+    (it.context ? '<p class="ctx">' + esc(it.context) + '</p>' : '') + (safeLinks(it.links) ? '<div class="links">' + safeLinks(it.links) + '</div>' : '') +
+    (opts ? '<div class="opts" role="group" aria-label="Options">' + opts + '</div>' : '') +
+    '<textarea id="note-' + esc(id) + '" data-note="' + esc(id) + '" rows="1" placeholder="Note (optional)" aria-label="Note for ' + esc(it.title || id) + '">' + esc(d.note || '') + '</textarea></li>';
+}
+function decideHtml() {
+  var open = openItems(), sent = sentItems(), done = doneItems();
+  var html = open.length ? '<ul class="cards">' + open.map(decisionHtml).join('') + '</ul>' : '<div class="empty">Nothing needs you right now. Claude will message you when a question lands here.</div>';
+  if (sent.length) html += '<details class="fold" open><summary>Sent, Claude is on it (' + sent.length + ')</summary><div class="mini">' + sent.map(function (id) { var a = answers[id]; return '<div class="it"><b>' + esc(items[id].title || id) + '</b><span class="res">' + esc((a.choice ? optLabel(items[id], a.choice) : 'Note') + (a.note ? ' · ' + a.note : '')) + '</span></div>'; }).join('') + '</div></details>';
+  if (done.length) html += '<details class="fold"><summary>Decided (' + done.length + ')</summary><div class="mini">' + done.map(function (id) { return '<div class="it"><b>' + esc(items[id].title || id) + '</b><span class="res">' + esc(items[id].resolution || 'Done') + '</span></div>'; }).join('') + '</div></details>';
+  return html;
+}
+function updateBar() {
+  var n = readyIds().length, bar = document.getElementById('sendbar'), btn = document.getElementById('send');
+  if (!n && !dirty) { if (!document.getElementById('status').classList.contains('err')) bar.hidden = true; return; }
+  bar.hidden = false; btn.disabled = !db;
+  var parts = []; if (n) parts.push(n + ' answer' + (n > 1 ? 's' : '') + ' ready'); if (dirty) parts.push('plan changes saved');
+  setStatus(parts.join(' · ') + '. Nothing reaches Claude until you send.', false);
+}
+
+// Pipeline bar: hours left per horizon (3 shades), done this round, and an estimated finish,
+// assuming each horizon runs as its own worker plan after the one before it.
+function whenAt(hoursFromNow) {
+  var d = new Date(Date.now() + hoursFromNow * 3600e3);
+  try { return d.toLocaleString(undefined, { weekday: 'short', hour: '2-digit', minute: '2-digit' }); } catch (e) { return d.toISOString().slice(0, 16).replace('T', ' '); }
+}
+function renderPipeline() {
+  var el = document.getElementById('pipeline');
+  if (!Object.keys(cards).length) { el.hidden = true; return; }
+  var sum = function (ids) { return ids.reduce(function (s, id) { return s + (Number(cards[id].hours) || 0); }, 0); };
+  var done = Object.keys(cards).filter(function (id) { return cards[id].status === 'merged' && colOf(id) === 'now'; });
+  var nowIds = inCol('now'), nextIds = inCol('next'), laterIds = inCol('later');
+  var hNow = sum(nowIds), hNext = sum(nextIds), hLater = sum(laterIds), hDone = sum(done);
+  var eNow = workerPlan(nowIds).total, eNext = workerPlan(nextIds).total, eLater = workerPlan(laterIds).total;
+  var total = hDone + hNow + hNext + hLater || 1;
+  var pct = function (h) { return (h / total * 100).toFixed(2) + '%'; };
+  var row = function (cls, name, h, e, tail) {
+    return '<dt><i class="' + cls + '"></i>' + name + '</dt><dd>' + tail + '</dd><dd class="n">' + hrs(h) + (e != null ? ' · ~' + hrs(e) + ' elapsed' : '') + '</dd>';
+  };
+  el.innerHTML = '<div class="head"><b>' + hrs(hNow + hNext + hLater) + ' of work to go</b><span>' + done.length + ' done this round</span></div>' +
+    '<div class="bar" role="img" aria-label="' + esc(hrs(hDone) + ' done, ' + hrs(hNow) + ' Now, ' + hrs(hNext) + ' Next, ' + hrs(hLater) + ' Later') + '">' +
+    (hDone ? '<i class="seg-done" style="width:' + pct(hDone) + '"></i>' : '') +
+    (hNow ? '<i class="seg-now" style="width:' + pct(hNow) + '"></i>' : '') +
+    (hNext ? '<i class="seg-next" style="width:' + pct(hNext) + '"></i>' : '') +
+    (hLater ? '<i class="seg-later" style="width:' + pct(hLater) + '"></i>' : '') + '</div>' +
+    '<dl>' +
+    (hDone ? row('seg-done', 'Done', hDone, null, 'merged this round') : '') +
+    row('seg-now', 'Now', hNow, eNow, nowIds.length ? 'done ' + esc(whenAt(eNow)) : 'nothing running') +
+    row('seg-next', 'Next', hNext, eNext, nextIds.length ? 'done ' + esc(whenAt(eNow + eNext)) : 'nothing picked') +
+    row('seg-later', 'Later', hLater, eLater, laterIds.length ? 'if all of it: ' + esc(whenAt(eNow + eNext + eLater)) : 'empty') +
+    '</dl><p class="note">Estimates from Claude, in worker-hours. A horizon starts when the one before it clears. Your own steps (decisions, the deploy) aren\'t counted.</p>';
+  el.hidden = false;
+}
+
+function render() {
+  var ids = Object.keys(cards);
+  renderPipeline();
+  ['now', 'next', 'later'].forEach(function (k) { document.getElementById('cnt-' + k).textContent = inCol(k).length + ' card' + (inCol(k).length === 1 ? '' : 's'); });
+  var nOpen = openItems().length;
+  document.getElementById('cnt-decide').textContent = nOpen ? nOpen + ' waiting' : 'none';
+  document.getElementById('tab-decide').classList.toggle('hot', nOpen > 0);
+  document.querySelectorAll('.tab').forEach(function (t) { t.setAttribute('aria-selected', String(t.getAttribute('data-col') === col)); });
+  if (ids.length) {
+    var nx0 = inCol('next'), p0 = workerPlan(nx0);
+    document.getElementById('summary').textContent = (nOpen ? nOpen + ' question' + (nOpen > 1 ? 's' : '') + ' for you · ' : '') + inCol('now').length + ' in the current round · ' + nx0.length + ' picked for next' + (nx0.length ? ', about ' + hrs(p0.total) + ' elapsed' : '');
+  }
+  if (col === 'decide') {
+    var f = document.activeElement && document.activeElement.id;
+    document.getElementById('view').innerHTML = '<p class="intro">' + INTRO.decide + '</p>' + decideHtml();
+    if (f && document.getElementById(f)) { var el = document.getElementById(f); el.focus(); if (el.tagName === 'TEXTAREA') { var v = el.value.length; el.setSelectionRange(v, v); } }
+    updateBar(); return;
+  }
+  if (!ids.length) return;
+  var nextIds = inCol('next'), plan = workerPlan(nextIds);
+  var list = inCol(col), html = '<p class="intro">' + INTRO[col] + '</p>';
+
+  if (col === 'next') {
+    var rec = (meta.next || []).filter(function (r) { return cards[r.id] && cards[r.id].status !== 'merged'; });
+    var same = rec.length && rec.length === nextIds.length && rec.every(function (r, i) { return nextIds[i] === r.id; });
+    if (rec.length) html += '<section class="panel"><h2>Claude recommends</h2><ol>' + rec.map(function (r) { return '<li><strong>' + esc(label(cards[r.id])) + '</strong>. ' + esc(r.why) + '</li>'; }).join('') + '</ol>' +
+      (meta.recNote ? '<p>' + esc(meta.recNote) + '</p>' : '') +
+      '<p><button class="btn primary" type="button" id="accept"' + (same ? ' disabled' : '') + '>' + (same ? 'Next matches this' : 'Use this order') + '</button></p></section>';
+    if (nextIds.length) {
+      html += '<section class="panel"><h2>Worker plan</h2><p style="margin:0 0 8px">' + plan.workers.length + ' worker' + (plan.workers.length === 1 ? '' : 's') + ' in parallel · about ' + hrs(plan.total) + ' elapsed · ' + hrs(plan.work) + ' of worker time</p><div class="workers">' +
+        plan.workers.map(function (l, i) { return '<div class="worker"><b>Worker ' + (i + 1) + '</b> · ' + l.ids.map(function (id) { return esc(label(cards[id])); }).join(' → ') + '<div class="meta">' + esc(hrs(l.end)) + (l.notes.length ? ' · ' + esc(l.notes.filter(function (v, j, a) { return a.indexOf(v) === j; }).join('; ')) : '') + '</div></div>'; }).join('') + '</div></section>';
+      if (plan.warnings.length) html += '<section class="panel"><h2>Check before starting</h2><div class="workers">' + plan.warnings.map(function (w) { return '<div class="warn">' + esc(w) + '</div>'; }).join('') + '</div></section>';
+    }
+  }
+  if (col === 'later') html += mapHtml(inCol('next').concat(inCol('later')).filter(function (id) { return cards[id].hours > 0; }));
+  html += list.length ? '<ul class="cards">' + list.map(function (id, i) { return cardHtml(id, i, list.length); }).join('') + '</ul>'
+    : '<div class="empty">' + (col === 'next' ? 'Nothing picked yet. Tap “Use this order”, or move cards here with their Next button.' : 'Nothing here.') + '</div>';
+  var merged = ids.filter(function (id) { return cards[id].status === 'merged' && colOf(id) === col; });
+  if (merged.length) html += '<p class="intro" style="margin-top:14px">Done this round: ' + merged.map(function (id) { return esc(label(cards[id])); }).join(' · ') + '</p>';
+  document.getElementById('view').innerHTML = html;
+}
+
+function setStatus(t, err) { var s = document.getElementById('status'); s.textContent = t; s.className = 'msg' + (err ? ' err' : ''); document.getElementById('sendbar').hidden = false; }
+function save(id, c, order) {
+  place[id] = { col: c, order: order }; dirty = true; render(); updateBar();
+  if (!db) { setStatus('Changed here only: saving isn\'t available in this view.', true); return Promise.resolve(); }
+  return db.collection('placement').doc(id).set({ col: c, order: order, at: new Date().toISOString() }).catch(function (e) { setStatus('Couldn\'t save (' + ((e && e.code) || 'error') + '). Try again.', true); });
+}
+function renumber(ids) { ids.forEach(function (id, i) { if (orderOf(id) !== i + 1 || colOf(id) !== 'next') save(id, 'next', i + 1); }); }
+
+document.querySelector('.tabs').addEventListener('click', function (e) {
+  var t = e.target.closest('.tab'); if (!t) return;
+  col = t.getAttribute('data-col'); try { history.replaceState(null, '', '#' + col); } catch (x) {} render(); window.scrollTo(0, 0);
+});
+document.getElementById('view').addEventListener('input', function (e) {
+  var id = e.target.getAttribute && e.target.getAttribute('data-note'); if (!id) return;
+  var was = isReady(id); drafts[id] = Object.assign({}, drafts[id], { note: e.target.value });
+  if (was !== isReady(id)) render(); else updateBar();
+});
+document.getElementById('view').addEventListener('click', function (e) {
+  var g = e.target.closest('[data-goto]');
+  if (g) { e.preventDefault(); col = g.getAttribute('data-goto'); try { history.replaceState(null, '', '#' + col); } catch (x) {} render(); window.scrollTo(0, 0); return; }
+  var b = e.target.closest('button'); if (!b || b.disabled) return;
+  if (b.hasAttribute('data-choice')) {
+    var iid = b.getAttribute('data-item'), ch = b.getAttribute('data-choice'), d0 = drafts[iid] || {};
+    drafts[iid] = Object.assign({}, d0, { choice: d0.choice === ch ? null : ch }); render(); return;
+  }
+  if (b.id === 'accept') {
+    var rec = (meta.next || []).map(function (r) { return r.id; }).filter(function (id) { return cards[id]; });
+    var rest = inCol('next').filter(function (id) { return rec.indexOf(id) === -1; });
+    renumber(rec.concat(rest)); return;
+  }
+  var id = b.getAttribute('data-id') || b.getAttribute('data-up') || b.getAttribute('data-down');
+  if (b.hasAttribute('data-move')) {
+    var to = b.getAttribute('data-move'); if (to === colOf(id)) return;
+    save(id, to, to === 'next' ? inCol('next').length + 1 : orderOf(id));
+    if (to !== 'next') renumber(inCol('next'));
+    return;
+  }
+  var ids = inCol('next'), i = ids.indexOf(id), j = b.hasAttribute('data-up') ? i - 1 : i + 1;
+  if (i < 0 || j < 0 || j >= ids.length) return;
+  ids.splice(j, 0, ids.splice(i, 1)[0]); renumber(ids);
+});
+document.getElementById('send').addEventListener('click', async function () {
+  if (!db) return;
+  var btn = this; btn.disabled = true;
+  var lines = [], ready = readyIds();
+  try {
+    for (var i = 0; i < ready.length; i++) {
+      var id = ready[i], d = drafts[id], note = (d.note || '').trim(), choice = d.choice || null;
+      await db.collection('answers').doc(id).set({ choice: choice, note: note, at: new Date().toISOString() });
+      lines.push('- ' + id + ': ' + (choice ? optLabel(items[id], choice) : '(note)') + (note ? ' — ' + note : ''));
+      delete drafts[id];
+    }
+  } catch (e) { btn.disabled = false; setStatus('Couldn\'t save every answer (' + ((e && e.code) || 'error') + '). Those still shown weren\'t sent; try again.', true); render(); return; }
+  var text = '';
+  if (lines.length) text += 'Answers (read collection "answers"):\n' + lines.join('\n') + '\n';
+  if (dirty) { var nx = inCol('next'), plan = workerPlan(nx); text += 'Plan (read collection "placement"): Now: ' + (inCol('now').join(', ') || 'nothing') + '; Next, in order: ' + (nx.join(', ') || 'nothing') + '; ' + plan.workers.length + ' workers, about ' + hrs(plan.total) + ' elapsed' + (plan.warnings.length ? '; ' + plan.warnings.length + ' warnings shown' : '') + '\n'; }
+  var told = false;
+  if (comments && text) {
+    try {
+      if (await comments.canSendToClaude() === 'available') {
+        var anchor = await comments.anchorFor(document.querySelector('h1'));
+        await comments.sendToClaude({ anchor: anchor, text: ('__PROJECT__ Roadmap update\n' + text).slice(0, 3900) }); told = true;
+      }
+    } catch (e) { told = false; }
+  }
+  dirty = false; render();
+  setStatus(told ? 'Sent to Claude.' : 'Saved. Claude picks it up at the next check-in.', false);
+  document.getElementById('sendbar').hidden = false; btn.disabled = true;
+});
+
+var h = (location.hash || '').slice(1); col = (COLS[h] || h === 'decide') ? h : 'decide';
+render();
+
+(async function () {
+  try { db = window.claude ? await window.claude.use('db') : null; } catch (e) { db = null; }
+  try { comments = window.claude ? await window.claude.use('comments') : null; } catch (e) { comments = null; }
+  if (!db) { document.getElementById('summary').textContent = 'The plan can\'t load in this view.'; return; }
+  var t = setTimeout(function () { document.getElementById('summary').textContent = 'Still loading the plan…'; }, 10000);
+  document.getElementById('send').disabled = false;
+  db.collection('cards').onSnapshot(function (snap) {
+    clearTimeout(t); var next = {};
+    snap.docs.forEach(function (d) { next[d.id] = d.data() || {}; });
+    cards = next; render();
+  }, function () { clearTimeout(t); document.getElementById('summary').textContent = 'Couldn\'t load the plan.'; });
+  db.collection('placement').onSnapshot(function (snap) {
+    var next = {}; snap.docs.forEach(function (d) { next[d.id] = d.data() || {}; }); place = next; render();
+  }, function () {});
+  db.doc('meta/plan').onSnapshot(function (d) { meta = (d && d.data && d.data()) || {}; render(); }, function () {});
+  db.collection('items').onSnapshot(function (snap) {
+    var next = {}; snap.docs.forEach(function (d) { next[d.id] = d.data() || {}; }); items = next; render();
+  }, function () {});
+  db.collection('answers').onSnapshot(function (snap) {
+    var next = {}; snap.docs.forEach(function (d) { var v = d.data() || {}; next[d.id] = { choice: typeof v.choice === 'string' ? v.choice : null, note: typeof v.note === 'string' ? v.note : '' }; }); answers = next; render();
+  }, function () {});
+})();
+</script>
