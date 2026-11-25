@@ -1,9 +1,9 @@
 # CLAUDE.md
 
 This repo is a Claude Code plugin marketplace (`sw-eng-doc-mastery`) holding two plugins:
-`doc-mastery` in `plugins/doc-mastery/` and `lane-orchestrator` in `plugins/lane-orchestrator/`.
+`doc-mastery` in `plugins/doc-mastery/` and `workload-orchestrator` in `plugins/workload-orchestrator/`.
 See `README.md` for what they contain. The rules below name `doc-mastery`; they apply to
-`lane-orchestrator` the same way (validate it, bump its own `version`, keep it generic).
+`workload-orchestrator` the same way (validate it, bump its own `version`, keep it generic).
 
 ## Rules for changing it
 

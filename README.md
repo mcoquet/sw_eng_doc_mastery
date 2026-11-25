@@ -6,9 +6,9 @@ A Claude Code plugin marketplace with two plugins of its own:
 [Superpowers](https://github.com/obra/superpowers) development workflow plus **living
 documentation**, so every project keeps its glossary, domain model, C4 architecture diagrams
 and ADRs current as the code changes.
-- **`lane-orchestrator`**: a coordinator playbook for working a backlog as parallel Claude
+- **`workload-orchestrator`**: a coordinator playbook for working a backlog as parallel Claude
   Code cloud sessions ("lanes"), with a mobile roadmap artifact as the control surface. See
-  [below](#lane-orchestrator).
+  [below](#workload-orchestrator).
 
 ## What doc-mastery gives you
 
@@ -22,7 +22,7 @@ and ADRs current as the code changes.
 | `c4-architecture:c4-architecture` | C4 diagrams in Mermaid under `docs/architecture/`. From [softaworks/agent-toolkit](https://github.com/softaworks/agent-toolkit). |
 | `superpowers:*` | The [Superpowers](https://github.com/obra/superpowers) workflow skills. |
 
-Only `doc-mastery` (and `lane-orchestrator`) live in this repo. The other three are installed automatically as its
+Only `doc-mastery` (and `workload-orchestrator`) live in this repo. The other three are installed automatically as its
 dependencies: this marketplace lists them, fetched unmodified from their upstream repos and
 pinned (Superpowers to a release tag, the two skills to a commit, one folder each), so
 nothing is copied here and installs are reproducible.
@@ -93,9 +93,9 @@ to move the pin. It never changes the pins itself. A version that was already ra
 an issue closed as not planned, isn't raised again; if upstream moves again while an issue is
 open, that issue is updated.
 
-## lane-orchestrator
+## workload-orchestrator
 
-One skill, `lane-orchestrator:lane-orchestrator`, for a session acting as **coordinator**:
+One skill, `workload-orchestrator:workload-orchestrator`, for a session acting as **coordinator**:
 
 - It splits the tickets you put in **Now** into file-disjoint groups and starts one cloud
   session (a lane) per group, each ending in a PR.
@@ -108,10 +108,10 @@ One skill, `lane-orchestrator:lane-orchestrator`, for a session acting as **coor
 It is independent of `doc-mastery` and opt-in:
 
 ```
-/plugin install lane-orchestrator@sw-eng-doc-mastery
+/plugin install workload-orchestrator@sw-eng-doc-mastery
 ```
 
-or add `"lane-orchestrator@sw-eng-doc-mastery": true` to a project's `enabledPlugins`. In
+or add `"workload-orchestrator@sw-eng-doc-mastery": true` to a project's `enabledPlugins`. In
 cloud sessions, add the install line to the environment's setup script, next to the
 doc-mastery one.
 
@@ -132,9 +132,9 @@ plugins/doc-mastery/
 ├── hooks/hooks.json                 SessionStart: print rules/workflow-rules.md
 ├── rules/workflow-rules.md          the always-on rules
 └── skills/                          catch-up, domain-model, setup-project
-plugins/lane-orchestrator/
+plugins/workload-orchestrator/
 ├── .claude-plugin/plugin.json       plugin manifest
-└── skills/lane-orchestrator/        SKILL.md, assets/roadmap.html, references/
+└── skills/workload-orchestrator/        SKILL.md, assets/roadmap.html, references/
 .github/workflows/check-upstreams.yml  weekly upstream check
 .github/scripts/check_upstreams.py     the check (stdlib Python + git + gh)
 ```
@@ -145,5 +145,5 @@ Superpowers (Jesse Vincent), `c4-architecture` (softaworks) and `domain-modeling
 Pocock) are MIT licensed by their authors and fetched from their own repos at install time;
 nothing of theirs is copied into this repo.
 
-This repo's own content (the `doc-mastery` and `lane-orchestrator` plugins, its rules and skills, and the upstream
+This repo's own content (the `doc-mastery` and `workload-orchestrator` plugins, its rules and skills, and the upstream
 check script) is MIT licensed; see `LICENSE`.

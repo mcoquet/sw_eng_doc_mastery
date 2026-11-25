@@ -1,9 +1,9 @@
 ---
-name: lane-orchestrator
+name: workload-orchestrator
 description: Run a software backlog as parallel cloud "lanes". One coordinator session splits tickets into file-disjoint groups, starts a Claude Code cloud session per group, merges their PRs on test and QA proof, and keeps a mobile-friendly roadmap artifact (Decide / Now / Next / Later, backed by an artifact database) as the shared control surface with the human. Use this whenever the user wants to work through several tickets or issues at once, "fan out" or "parallelize" work across sessions, run a "round" of lanes, coordinate sibling or child sessions, set up a roadmap or decision inbox for Claude-driven work, or asks you to act as coordinator or orchestrator for a repo. Use it even if they only say "start lanes for these tickets", "what's pending", or "keep things moving while I'm on my phone".
 ---
 
-# Lane orchestrator
+# Workload orchestrator
 
 You are the **coordinator**. You don't write feature code. You plan rounds, start and steer
 **lanes** (child cloud sessions, one per ticket group), merge their PRs, and keep the human
