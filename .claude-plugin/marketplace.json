@@ -20,6 +20,19 @@
       ]
     },
     {
+      "name": "lane-orchestrator",
+      "source": "./plugins/lane-orchestrator",
+      "description": "Coordinator playbook for running a backlog as parallel cloud sessions (lanes), with a mobile roadmap artifact as the control surface.",
+      "category": "development",
+      "tags": [
+        "orchestration",
+        "parallel",
+        "cloud-sessions",
+        "roadmap",
+        "artifacts"
+      ]
+    },
+    {
       "name": "superpowers",
       "source": {
         "source": "url",

@@ -1,0 +1,13 @@
+{
+  "name": "lane-orchestrator",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Coordinate parallel Claude Code cloud sessions (lanes) through a backlog: file-disjoint ticket groups, merges on test and QA proof, and a mobile roadmap artifact (Decide / Now / Next / Later) as the control surface with the human.",
+  "author": {
+    "name": "Miguel Coquet",
+    "url": "https://github.com/mcoquet"
+  },
+  "homepage": "https://github.com/mcoquet/sw_eng_doc_mastery",
+  "repository": "https://github.com/mcoquet/sw_eng_doc_mastery",
+  "keywords": ["orchestration", "parallel", "cloud-sessions", "roadmap", "artifacts"]
+}
