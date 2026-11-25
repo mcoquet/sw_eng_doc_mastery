@@ -22,7 +22,7 @@
     {
       "name": "workload-orchestrator",
       "source": "./plugins/workload-orchestrator",
-      "description": "Coordinator playbook for running a backlog as parallel cloud sessions (lanes), with a mobile roadmap artifact as the control surface.",
+      "description": "Coordinator playbook for running a backlog as parallel cloud sessions (workers), with a mobile roadmap artifact as the control surface.",
       "category": "development",
       "tags": [
         "orchestration",

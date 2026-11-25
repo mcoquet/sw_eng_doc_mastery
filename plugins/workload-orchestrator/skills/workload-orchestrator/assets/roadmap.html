@@ -112,10 +112,10 @@ a.chip { text-decoration: none; }
 .btn:disabled { opacity: .5; cursor: default; }
 .btn.icon { padding: 0; width: 44px; font-family: var(--font-data); }
 .warn { background: var(--warn-bg); color: var(--warn-ink); border-radius: 10px; padding: 10px 12px; font-size: 14px; }
-.lanes { display: grid; gap: 8px; }
-.lane { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
-.lane b { font-family: var(--font-data); font-weight: 500; }
-.lane .meta { color: var(--muted); font-size: 13px; }
+.workers { display: grid; gap: 8px; }
+.worker { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.worker b { font-family: var(--font-data); font-weight: 500; }
+.worker .meta { color: var(--muted); font-size: 13px; }
 .empty { color: var(--muted); border: 1px dashed var(--line); border-radius: 12px; padding: 18px 14px; text-align: center; }
 .map svg { width: 100%; height: auto; display: block; }
 .sendbar { position: fixed; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 1px solid var(--line); padding-block: 10px calc(10px + env(safe-area-inset-bottom, 0px)); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; gap: 10px; align-items: center; z-index: 6; }
@@ -150,14 +150,14 @@ a.chip { text-decoration: none; }
 <script>
 var COLS = { now: 'Now', next: 'Next', later: 'Later' };
 var INTRO = {
-  now: 'What the current round is building. Each lane opens one PR; Claude merges it once tests and QA pass.',
-  next: 'Your picks for the next round, in the order you want them. Claude plans the lanes underneath and starts them when Now clears.',
+  now: 'What the current round is building. Each worker opens one PR; Claude merges it once tests and QA pass.',
+  next: 'Your picks for the next round, in the order you want them. Claude plans the workers underneath and starts them when Now clears.',
   later: 'Everything else. The map shows importance against effort, so quick wins stand out.'
 };
 var IMP = { critical: 4, high: 3, medium: 2, low: 1 };
 // Deadline chips: add your project's tags here; any other tag shows as 'before <tag>'.
 var DEADLINE = { deploy: 'before deploy', none: '' };
-var STATUS = { running: 'lane running', pr: 'PR ready', waiting: 'waiting on others', merged: 'merged' };
+var STATUS = { running: 'worker running', pr: 'PR ready', waiting: 'waiting on others', merged: 'merged' };
 var GH = 'https://github.com/__REPO__/'; // owner/name, for issue and PR links
 
 var items = {};      // decisions waiting on the human (written by Claude)
@@ -179,35 +179,35 @@ function orderOf(id) { var p = place[id]; return (p && typeof p.order === 'numbe
 function inCol(c) { return Object.keys(cards).filter(function (id) { return colOf(id) === c && cards[id].status !== 'merged'; }).sort(function (a, b) { return orderOf(a) - orderOf(b) || (IMP[cards[b].importance] || 0) - (IMP[cards[a].importance] || 0); }); }
 function hrs(h) { h = Number(h) || 0; return (h % 1 ? h.toFixed(1) : h) + 'h'; }
 
-// Lane plan for Next: cards sharing an area run in one lane, in order; a card waits for what it's blocked by.
-function lanePlan(ids) {
-  var lanes = [], end = {}, warnings = [], nowIds = inCol('now');
+// Worker plan for Next: cards sharing an area run in one worker, in order; a card waits for what it's blocked by.
+function workerPlan(ids) {
+  var workers = [], end = {}, warnings = [], nowIds = inCol('now');
   ids.forEach(function (id) {
     var c = cards[id], areas = c.areas || [];
-    var lane = lanes.filter(function (l) { return l.areas.some(function (a) { return areas.indexOf(a) !== -1; }); })[0];
-    if (!lane) { lane = { ids: [], areas: [], end: 0, notes: [] }; lanes.push(lane); }
-    var start = lane.end;
+    var worker = workers.filter(function (l) { return l.areas.some(function (a) { return areas.indexOf(a) !== -1; }); })[0];
+    if (!worker) { worker = { ids: [], areas: [], end: 0, notes: [] }; workers.push(worker); }
+    var start = worker.end;
     (c.blockedBy || []).forEach(function (dep) {
       if (!cards[dep] || cards[dep].status === 'merged') return;
       var dc = colOf(dep);
       if (dc === 'next' && end[dep] != null) start = Math.max(start, end[dep]);
       else if (dc === 'next') warnings.push(label(c) + ' is above ' + label(cards[dep]) + ', which it depends on. Move it below.');
-      else if (dc === 'now') lane.notes.push('starts after ' + label(cards[dep]) + ' merges');
+      else if (dc === 'now') worker.notes.push('starts after ' + label(cards[dep]) + ' merges');
       else warnings.push(label(c) + ' depends on ' + label(cards[dep]) + ', which is still in Later. Move that to Next too, or this waits.');
     });
     nowIds.forEach(function (nid) {
       var shared = (cards[nid].areas || []).filter(function (a) { return areas.indexOf(a) !== -1; });
-      if (shared.length && (c.blockedBy || []).indexOf(nid) === -1) lane.notes.push('touches the same code as ' + label(cards[nid]) + ' (' + shared.join(', ') + '); merges main in after it lands');
+      if (shared.length && (c.blockedBy || []).indexOf(nid) === -1) worker.notes.push('touches the same code as ' + label(cards[nid]) + ' (' + shared.join(', ') + '); merges main in after it lands');
     });
-    if (c.decisions > 0) warnings.push(label(c) + ' needs ' + c.decisions + ' decision' + (c.decisions > 1 ? 's' : '') + ' from you before it can be built. Its lane starts with a design pass and sends them to your inbox.');
+    if (c.decisions > 0) warnings.push(label(c) + ' needs ' + c.decisions + ' decision' + (c.decisions > 1 ? 's' : '') + ' from you before it can be built. Its worker starts with a design pass and sends them to your inbox.');
     if (c.status === 'waiting') warnings.push(label(c) + ' is waiting on someone outside the team: ' + (c.waitingOn || 'see the ticket') + '.');
     end[id] = start + (Number(c.hours) || 0);
-    lane.end = end[id]; lane.ids.push(id);
-    areas.forEach(function (a) { if (lane.areas.indexOf(a) === -1) lane.areas.push(a); });
+    worker.end = end[id]; worker.ids.push(id);
+    areas.forEach(function (a) { if (worker.areas.indexOf(a) === -1) worker.areas.push(a); });
   });
-  var total = lanes.reduce(function (m, l) { return Math.max(m, l.end); }, 0);
+  var total = workers.reduce(function (m, l) { return Math.max(m, l.end); }, 0);
   var work = ids.reduce(function (s, id) { return s + (Number(cards[id].hours) || 0); }, 0);
-  return { lanes: lanes, total: total, work: work, warnings: warnings };
+  return { workers: workers, total: total, work: work, warnings: warnings };
 }
 
 function cardHtml(id, i, total) {
@@ -228,7 +228,7 @@ function cardHtml(id, i, total) {
     (cur === 'next' ? '<span class="ord">' + (i + 1) + '</span>' : '') + '</div><div class="chips">' + chips + '</div></summary>' +
     '<div class="body"><p>' + esc(c.problem) + pr + results + '</p>' +
     '<dl><dt>Why it matters</dt><dd>' + esc(c.why) + '</dd>' +
-    '<dt>Effort</dt><dd>' + esc(c.effortNote || (c.effort + ', about ' + hrs(c.hours) + ' of lane time')) + '</dd>' +
+    '<dt>Effort</dt><dd>' + esc(c.effortNote || (c.effort + ', about ' + hrs(c.hours) + ' of worker time')) + '</dd>' +
     '<dt>Blocked by</dt><dd>' + deps(c.blockedBy) + '</dd>' +
     '<dt>Blocks</dt><dd>' + deps(c.blocks) + '</dd>' +
     (c.decisions > 0 ? '<dt>Your input</dt><dd>' + esc(c.decisionsNote || (c.decisions + ' decisions')) + '</dd>' : '') +
@@ -238,7 +238,7 @@ function cardHtml(id, i, total) {
 }
 
 function mapHtml(ids) {
-  // Importance (up) against effort in lane-hours (right); Next cards filled, Later hollow.
+  // Importance (up) against effort in worker-hours (right); Next cards filled, Later hollow.
   var W = 340, H = 236, L = 34, R = 12, T = 14, B = 34, maxH = 4;
   var x = function (h) { return L + Math.min(Number(h) || 0, maxH) / maxH * (W - L - R); };
   var y = function (imp) { return T + (4 - (IMP[imp] || 1)) / 3 * (H - T - B); };
@@ -261,7 +261,7 @@ function mapHtml(ids) {
     '<text x="' + (L + 6) + '" y="' + (H - B - 6) + '" font-size="10.5" fill="var(--muted)">FILL-INS</text>' +
     '<text x="' + (W - R - 6) + '" y="' + (H - B - 6) + '" font-size="10.5" fill="var(--muted)" text-anchor="end">HARD TO JUSTIFY</text>' +
     [1, 2, 3, 4].map(function (h) { return '<text x="' + x(h) + '" y="' + (H - B + 14) + '" font-size="10" fill="var(--muted)" text-anchor="middle" font-family="var(--font-data)">' + h + 'h</text>'; }).join('') +
-    '<text x="' + ((L + W - R) / 2) + '" y="' + (H - 4) + '" font-size="10.5" fill="var(--muted)" text-anchor="middle">lane-hours →</text>' +
+    '<text x="' + ((L + W - R) / 2) + '" y="' + (H - 4) + '" font-size="10.5" fill="var(--muted)" text-anchor="middle">worker-hours →</text>' +
     '<text x="10" y="' + ((T + H - B) / 2) + '" font-size="10.5" fill="var(--muted)" text-anchor="middle" transform="rotate(-90 10 ' + ((T + H - B) / 2) + ')">importance →</text>' +
     dots + '</svg><div class="legend"><span>● in Next</span><span>○ in Later</span></div></div>';
 }
@@ -304,7 +304,7 @@ function updateBar() {
 }
 
 // Pipeline bar: hours left per horizon (3 shades), done this round, and an estimated finish,
-// assuming each horizon runs as its own lane plan after the one before it.
+// assuming each horizon runs as its own worker plan after the one before it.
 function whenAt(hoursFromNow) {
   var d = new Date(Date.now() + hoursFromNow * 3600e3);
   try { return d.toLocaleString(undefined, { weekday: 'short', hour: '2-digit', minute: '2-digit' }); } catch (e) { return d.toISOString().slice(0, 16).replace('T', ' '); }
@@ -316,13 +316,13 @@ function renderPipeline() {
   var done = Object.keys(cards).filter(function (id) { return cards[id].status === 'merged' && colOf(id) === 'now'; });
   var nowIds = inCol('now'), nextIds = inCol('next'), laterIds = inCol('later');
   var hNow = sum(nowIds), hNext = sum(nextIds), hLater = sum(laterIds), hDone = sum(done);
-  var eNow = lanePlan(nowIds).total, eNext = lanePlan(nextIds).total, eLater = lanePlan(laterIds).total;
+  var eNow = workerPlan(nowIds).total, eNext = workerPlan(nextIds).total, eLater = workerPlan(laterIds).total;
   var total = hDone + hNow + hNext + hLater || 1;
   var pct = function (h) { return (h / total * 100).toFixed(2) + '%'; };
   var row = function (cls, name, h, e, tail) {
     return '<dt><i class="' + cls + '"></i>' + name + '</dt><dd>' + tail + '</dd><dd class="n">' + hrs(h) + (e != null ? ' · ~' + hrs(e) + ' elapsed' : '') + '</dd>';
   };
-  el.innerHTML = '<div class="head"><b>' + hrs(hNow + hNext + hLater) + ' of lane work to go</b><span>' + done.length + ' done this round</span></div>' +
+  el.innerHTML = '<div class="head"><b>' + hrs(hNow + hNext + hLater) + ' of worker work to go</b><span>' + done.length + ' done this round</span></div>' +
     '<div class="bar" role="img" aria-label="' + esc(hrs(hDone) + ' done, ' + hrs(hNow) + ' Now, ' + hrs(hNext) + ' Next, ' + hrs(hLater) + ' Later') + '">' +
     (hDone ? '<i class="seg-done" style="width:' + pct(hDone) + '"></i>' : '') +
     (hNow ? '<i class="seg-now" style="width:' + pct(hNow) + '"></i>' : '') +
@@ -333,7 +333,7 @@ function renderPipeline() {
     row('seg-now', 'Now', hNow, eNow, nowIds.length ? 'done ' + esc(whenAt(eNow)) : 'nothing running') +
     row('seg-next', 'Next', hNext, eNext, nextIds.length ? 'done ' + esc(whenAt(eNow + eNext)) : 'nothing picked') +
     row('seg-later', 'Later', hLater, eLater, laterIds.length ? 'if all of it: ' + esc(whenAt(eNow + eNext + eLater)) : 'empty') +
-    '</dl><p class="note">Estimates from Claude, in lane-hours. A horizon starts when the one before it clears. Your own steps (decisions, the deploy) aren\'t counted.</p>';
+    '</dl><p class="note">Estimates from Claude, in worker-hours. A horizon starts when the one before it clears. Your own steps (decisions, the deploy) aren\'t counted.</p>';
   el.hidden = false;
 }
 
@@ -346,7 +346,7 @@ function render() {
   document.getElementById('tab-decide').classList.toggle('hot', nOpen > 0);
   document.querySelectorAll('.tab').forEach(function (t) { t.setAttribute('aria-selected', String(t.getAttribute('data-col') === col)); });
   if (ids.length) {
-    var nx0 = inCol('next'), p0 = lanePlan(nx0);
+    var nx0 = inCol('next'), p0 = workerPlan(nx0);
     document.getElementById('summary').textContent = (nOpen ? nOpen + ' question' + (nOpen > 1 ? 's' : '') + ' for you · ' : '') + inCol('now').length + ' in the current round · ' + nx0.length + ' picked for next' + (nx0.length ? ', about ' + hrs(p0.total) + ' elapsed' : '');
   }
   if (col === 'decide') {
@@ -356,7 +356,7 @@ function render() {
     updateBar(); return;
   }
   if (!ids.length) return;
-  var nextIds = inCol('next'), plan = lanePlan(nextIds);
+  var nextIds = inCol('next'), plan = workerPlan(nextIds);
   var list = inCol(col), html = '<p class="intro">' + INTRO[col] + '</p>';
 
   if (col === 'next') {
@@ -366,9 +366,9 @@ function render() {
       (meta.recNote ? '<p>' + esc(meta.recNote) + '</p>' : '') +
       '<p><button class="btn primary" type="button" id="accept"' + (same ? ' disabled' : '') + '>' + (same ? 'Next matches this' : 'Use this order') + '</button></p></section>';
     if (nextIds.length) {
-      html += '<section class="panel"><h2>Lane plan</h2><p style="margin:0 0 8px">' + plan.lanes.length + ' lane' + (plan.lanes.length === 1 ? '' : 's') + ' in parallel · about ' + hrs(plan.total) + ' elapsed · ' + hrs(plan.work) + ' of lane time</p><div class="lanes">' +
-        plan.lanes.map(function (l, i) { return '<div class="lane"><b>Lane ' + (i + 1) + '</b> · ' + l.ids.map(function (id) { return esc(label(cards[id])); }).join(' → ') + '<div class="meta">' + esc(hrs(l.end)) + (l.notes.length ? ' · ' + esc(l.notes.filter(function (v, j, a) { return a.indexOf(v) === j; }).join('; ')) : '') + '</div></div>'; }).join('') + '</div></section>';
-      if (plan.warnings.length) html += '<section class="panel"><h2>Check before starting</h2><div class="lanes">' + plan.warnings.map(function (w) { return '<div class="warn">' + esc(w) + '</div>'; }).join('') + '</div></section>';
+      html += '<section class="panel"><h2>Worker plan</h2><p style="margin:0 0 8px">' + plan.workers.length + ' worker' + (plan.workers.length === 1 ? '' : 's') + ' in parallel · about ' + hrs(plan.total) + ' elapsed · ' + hrs(plan.work) + ' of worker time</p><div class="workers">' +
+        plan.workers.map(function (l, i) { return '<div class="worker"><b>Worker ' + (i + 1) + '</b> · ' + l.ids.map(function (id) { return esc(label(cards[id])); }).join(' → ') + '<div class="meta">' + esc(hrs(l.end)) + (l.notes.length ? ' · ' + esc(l.notes.filter(function (v, j, a) { return a.indexOf(v) === j; }).join('; ')) : '') + '</div></div>'; }).join('') + '</div></section>';
+      if (plan.warnings.length) html += '<section class="panel"><h2>Check before starting</h2><div class="workers">' + plan.warnings.map(function (w) { return '<div class="warn">' + esc(w) + '</div>'; }).join('') + '</div></section>';
     }
   }
   if (col === 'later') html += mapHtml(inCol('next').concat(inCol('later')).filter(function (id) { return cards[id].hours > 0; }));
@@ -434,7 +434,7 @@ document.getElementById('send').addEventListener('click', async function () {
   } catch (e) { btn.disabled = false; setStatus('Couldn\'t save every answer (' + ((e && e.code) || 'error') + '). Those still shown weren\'t sent; try again.', true); render(); return; }
   var text = '';
   if (lines.length) text += 'Answers (read collection "answers"):\n' + lines.join('\n') + '\n';
-  if (dirty) { var nx = inCol('next'), plan = lanePlan(nx); text += 'Plan (read collection "placement"): Now: ' + (inCol('now').join(', ') || 'nothing') + '; Next, in order: ' + (nx.join(', ') || 'nothing') + '; ' + plan.lanes.length + ' lanes, about ' + hrs(plan.total) + ' elapsed' + (plan.warnings.length ? '; ' + plan.warnings.length + ' warnings shown' : '') + '\n'; }
+  if (dirty) { var nx = inCol('next'), plan = workerPlan(nx); text += 'Plan (read collection "placement"): Now: ' + (inCol('now').join(', ') || 'nothing') + '; Next, in order: ' + (nx.join(', ') || 'nothing') + '; ' + plan.workers.length + ' workers, about ' + hrs(plan.total) + ' elapsed' + (plan.warnings.length ? '; ' + plan.warnings.length + ' warnings shown' : '') + '\n'; }
   var told = false;
   if (comments && text) {
     try {

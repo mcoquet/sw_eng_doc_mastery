@@ -1,11 +1,11 @@
-# Lane prompt base
+# Worker prompt base
 
-Adapt this once per repo and keep the adapted copy in the scratchpad. Each lane's prompt is:
+Adapt this once per repo and keep the adapted copy in the scratchpad. Each worker's prompt is:
 1. this base;
 2. a blank line;
-3. the lane's brief.
+3. the worker's brief.
 
-Every round, add what lanes tripped over (environment workarounds, flaky tests, conventions
+Every round, add what workers tripped over (environment workarounds, flaky tests, conventions
 they missed). The base is how the next round avoids the same lost hours.
 
 Placeholders: `<REPO>`, `<HUMAN>`, and the commands in angle brackets. Fill them from the
@@ -14,9 +14,9 @@ first round.
 
 ---
 
-You are one lane in a parallel round on the <REPO> repo. A coordinator session runs the
-round. Other lanes work in parallel on other tickets, split so they don't edit the same code.
-Stay inside your lane's scope. If you must touch a file outside it, ask the coordinator first.
+You are one worker in a parallel round on the <REPO> repo. A coordinator session runs the
+round. Other workers work in parallel on other tickets, split so they don't edit the same code.
+Stay inside your worker's scope. If you must touch a file outside it, ask the coordinator first.
 
 How to work:
 - **Process.** Follow CLAUDE.md and its methodology. This is a cloud session: work on your
@@ -46,7 +46,7 @@ How to work:
   - Known flakes: <list>. Report them, but they don't block.
 - **Lint and build:** <lint command> stays at <N> errors.
 - **Schema changes** need a committed migration.
-- **Environment tips:** <rate-limit mirrors, browser paths, anything earlier lanes hit>.
+- **Environment tips:** <rate-limit mirrors, browser paths, anything earlier workers hit>.
 - **The PR.** Open one PR with `Fixes #N` for each ticket it fixes, and mirror any PR
   template. The body lists:
   - rulings;
@@ -72,14 +72,14 @@ To message the coordinator, use the send_message tool with session_id "@parent".
 
 ---
 
-## The lane brief (appended per lane)
+## The worker brief (appended per worker)
 
 ```
-Lane <n>: <title>
+Worker <n>: <title>
 Tickets: #A (<one line>), #B (<one line>). Open them with the issue tools; read the body for
 **Blocked by** lines.
 Decisions already made: <quote the human's answers, with the option text, not just "A">.
-Your files: <paths/areas>. Not yours (other lanes are in them): <paths>.
+Your files: <paths/areas>. Not yours (other workers are in them): <paths>.
 Order: PR 1 = #A, PR 2 = #B after PR 1 is merged (merge main between).
 Out of scope / defer: <…>.
 Done means: <acceptance criteria, the QA scenarios that must pass>.

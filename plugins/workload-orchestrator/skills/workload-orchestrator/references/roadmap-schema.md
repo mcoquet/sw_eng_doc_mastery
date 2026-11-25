@@ -45,17 +45,17 @@ artifact's `url` from another conversation) so the link stays the same.
 | `why` | string | why it matters to users, one or two sentences |
 | `importance` | `critical`/`high`/`medium`/`low` | sorts within a column |
 | `effort` | `S`/`M`/`L` | |
-| `hours` | number | lane-hours; drives the lane plan and the pipeline bar |
+| `hours` | number | worker-hours; drives the worker plan and the pipeline bar |
 | `effortNote` | string | what the hours include |
 | `deadline` | `deploy`, `none`, or any tag (shows as "before <tag>"; add labels in the `DEADLINE` map) | shown as a chip |
-| `areas` | string[] | code regions; shared areas mean same lane |
-| `blockedBy`, `blocks` | card ids | lanePlan waits on unmerged `blockedBy` |
+| `areas` | string[] | code regions; shared areas mean same worker |
+| `blockedBy`, `blocks` | card ids | workerPlan waits on unmerged `blockedBy` |
 | `decisions` | number | open questions count |
 | `decisionsNote` | string | |
 | `rec` | string | shown as "Claude recommends:" |
 | `status` | `idle`/`running`/`pr`/`waiting`/`merged` | merged cards drop out of the columns |
 | `pr` | number | |
-| `results` | https URL | the lane's results page |
+| `results` | https URL | the worker's results page |
 | `col`, `order` | | **default** placement only, used until the human moves it |
 
 ### `placement/<card id>`: `{col: "now"|"next"|"later", order: number, at: iso}`

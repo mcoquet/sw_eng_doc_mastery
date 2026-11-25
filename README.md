@@ -7,7 +7,7 @@ A Claude Code plugin marketplace with two plugins of its own:
 documentation**, so every project keeps its glossary, domain model, C4 architecture diagrams
 and ADRs current as the code changes.
 - **`workload-orchestrator`**: a coordinator playbook for working a backlog as parallel Claude
-  Code cloud sessions ("lanes"), with a mobile roadmap artifact as the control surface. See
+  Code cloud sessions ("workers"), with a mobile roadmap artifact as the control surface. See
   [below](#workload-orchestrator).
 
 ## What doc-mastery gives you
@@ -98,11 +98,11 @@ open, that issue is updated.
 One skill, `workload-orchestrator:workload-orchestrator`, for a session acting as **coordinator**:
 
 - It splits the tickets you put in **Now** into file-disjoint groups and starts one cloud
-  session (a lane) per group, each ending in a PR.
-- It merges those PRs on the lane's tests plus a results page with proof (screenshots,
+  session (a worker) per group, each ending in a PR.
+- It merges those PRs on the worker's tests plus a results page with proof (screenshots,
   command output). It never deploys.
 - It keeps one roadmap artifact as the shared control surface: Decide / Now / Next / Later
-  tabs, a lane plan from areas and dependencies, a progress bar, and a **Send** button that
+  tabs, a worker plan from areas and dependencies, a progress bar, and a **Send** button that
   wakes the coordinator. It's built for a phone.
 
 It is independent of `doc-mastery` and opt-in:
@@ -119,7 +119,7 @@ Inside the skill:
 - `SKILL.md`: the workflow, standing rules, merge steps and check-in trigger.
 - `assets/roadmap.html`: the roadmap app.
 - `references/roadmap-schema.md`: its database and capabilities.
-- `references/lane-prompt-template.md`: the base prompt for lanes.
+- `references/worker-prompt-template.md`: the base prompt for workers.
 - `references/lessons.md`: what went wrong in practice.
 
 ## Layout
