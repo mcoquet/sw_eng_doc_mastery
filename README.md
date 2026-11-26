@@ -97,8 +97,10 @@ open, that issue is updated.
 
 One skill, `workload-orchestrator:workload-orchestrator`, for a session acting as **coordinator**:
 
-- It splits the tickets you put in **Now** into file-disjoint groups and starts one cloud
-  session (a worker) per group, each ending in a PR.
+- It splits the tickets in **Now** into file-disjoint groups and starts one cloud session (a
+  worker) per group, each ending in a PR. **Next** is an approved queue: as workers finish,
+  it pulls the next ready cards into Now itself. Only **Later** needs you: move a card to
+  Next to approve it.
 - It merges those PRs on the worker's tests plus a results page with proof (screenshots,
   command output). It never deploys.
 - It keeps one roadmap artifact as the shared control surface: Decide / Now / Next / Later

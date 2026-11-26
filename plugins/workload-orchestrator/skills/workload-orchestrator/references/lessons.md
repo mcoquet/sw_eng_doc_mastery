@@ -48,10 +48,25 @@ thing that went wrong, then the fix.
   branch merged with main) plus the results page is the gate. A separate verifier session
   was tried and stopped at the human's request: it doubled the cost and found nothing the
   results pages didn't show.
+- **Don't cap the number of workers.** A fixed limit made ready work queue for no reason.
+  Cards wait only on a dependency the coordinator can name: a blocker, an open decision,
+  or shared code.
+- **Why a worker carries only 2–3 PRs in a chain.** Cards that share files can't run in
+  parallel, so one worker ships them as PRs one after another. Keep the chain short and start
+  a fresh worker for the rest once the earlier PRs merge. This costs no speed, because cards
+  that share files run one after another anyway. A long chain costs quality:
+  - the session's context gets compacted and it loses the early briefs and decisions;
+  - the branch grows, so each PR is harder to review and to check against its results page;
+  - a failure late in the chain holds up work that was already done.
+  It's a rule of thumb, not a limit: a chain of trivial edits can run longer.
 
 ## Talking to the human
 
 - They're on mobile all the time. Short messages, the action first, links over pasted
   content.
 - Message them as soon as a question lands. Don't batch questions until the end of a round.
-- State the cost before starting workers. A card moved into Now is the go-ahead.
+- State the cost when starting workers. A card moved out of Later (into Next or Now) is the
+  go-ahead.
+- **Next sat idle.** The coordinator waited for the human to move cards from Next to Now, so
+  work stalled between merges. Fix: Next is an approved queue; the coordinator pulls from it
+  after every merge and starts everything that's ready. Only Later needs the human.

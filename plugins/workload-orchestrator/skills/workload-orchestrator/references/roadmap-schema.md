@@ -60,8 +60,12 @@ artifact's `url` from another conversation) so the link stays the same.
 
 ### `placement/<card id>`: `{col: "now"|"next"|"later", order: number, at: iso}`
 
-This is where the card really sits. The human writes it by moving cards. You write it only
-when you're adding a card, or when the human asked you to move something.
+This is where the card really sits. The human writes it by moving cards. You write it only:
+- when you're adding a card;
+- when you promote a card from Next to Now (see "Pulling from Next" in SKILL.md);
+- when the human asked you to move something.
+
+Never move a card out of Later, and never reorder Next: both are the human's calls.
 
 ### `meta/plan`: `{next: [{id, why}], recNote}` (you write)
 

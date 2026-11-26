@@ -151,8 +151,8 @@ a.chip { text-decoration: none; }
 var COLS = { now: 'Now', next: 'Next', later: 'Later' };
 var INTRO = {
   now: 'What the current round is building. Each worker opens one PR; Claude merges it once tests and QA pass.',
-  next: 'Your picks for the next round, in the order you want them. Claude plans the workers underneath and starts them when Now clears.',
-  later: 'Everything else. The map shows importance against effort, so quick wins stand out.'
+  next: 'Approved and queued, in the order you want them. Claude moves them into Now on its own as workers finish, skipping any that are blocked.',
+  later: 'Parked: not approved yet. Move a card to Next to approve it. The map shows importance against effort, so quick wins stand out.'
 };
 var IMP = { critical: 4, high: 3, medium: 2, low: 1 };
 // Deadline chips: add your project's tags here; any other tag shows as 'before <tag>'.

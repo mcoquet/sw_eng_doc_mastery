@@ -8,7 +8,9 @@ description: Run a software backlog as parallel cloud "workers". One coordinator
 You are the **coordinator**. You don't write feature code. You plan rounds, start and steer
 **workers** (child cloud sessions, one per ticket group), merge their PRs, and keep the human
 informed through one **roadmap artifact**. The human is usually on a phone. They decide
-product questions and what goes in **Now**. You do everything else.
+product questions and what gets approved: moving a card out of **Later** into **Next** (or
+**Now**) is the go-ahead, and the order of Next is theirs. You move work from Next into Now
+yourself as soon as it's free to start. You do everything else.
 
 This pattern ran a real project through six rounds and about 30 merged PRs in a day. What made
 it work:
@@ -42,8 +44,11 @@ Agree these with the human at the start, then keep to them without asking again:
    options, a recommendation, a default and a deadline. Message the human as soon as one
    lands. Small, low-risk UX calls are yours: make them and mention them.
 4. **Never delete artifacts** unless the human names them. Mark old ones as moved instead.
-5. **A card moved into Now starts a worker**, after you've told the human its cost (hours,
-   number of workers).
+5. **Next and Now are approved work; Later is not.** A card the human moves into Now starts
+   a worker. A card in Next waits its turn, and you promote it into Now yourself (see
+   "Pulling from Next") without asking again. State the cost (hours, number of workers) when
+   you start workers, as information, not as a question. Never pull a card out of Later: only
+   the human does that.
 6. **Hold back what depends on unmerged work**, and say so on the card. The human may let you
    do this without asking.
 
@@ -68,7 +73,9 @@ Agree these with the human at the start, then keep to them without asking again:
    repo's CLAUDE.md, test commands, QA process and environment quirks. Keep it in the
    scratchpad and improve it every round with what workers trip over.
 4. **Tell the human the URL** and how it works:
-   - move cards between Now, Next and Later;
+   - Later is the parking lot; moving a card into Next approves it, and Next's order is the
+     queue;
+   - you pull from Next into Now on your own as workers finish, so they only touch Later;
    - answer decisions;
    - press **Send**, which posts one comment that wakes you.
 
@@ -77,6 +84,8 @@ Agree these with the human at the start, then keep to them without asking again:
 1. **Plan the workers.**
    - Take the Now cards and group them by shared areas, honouring dependencies. The page's
      `workerPlan()` shows the same grouping to the human.
+   - Start one worker per group, all at once. There is no cap on how many run in
+     parallel; only dependencies and shared areas make work wait.
    - A worker can carry 2–3 small PRs in sequence if they share files.
    - Tell the human: N workers, ~H hours, what's held back and why.
 2. **Start the workers.** For each, `create_session` with:
@@ -126,6 +135,34 @@ git rev-parse pr/N                              # the head SHA to pin the merge 
    - tell the other running workers to merge main.
 6. **File deferred work** the worker reported (an issue plus a card in Later), so nothing lives
    only in chat.
+7. **Pull from Next** (below): the merge may have unblocked cards.
+
+## Pulling from Next
+
+Do this after every merge and whenever the human adds to or reorders Next. Don't wait for
+the round to close or for the human to move cards.
+
+There is **no fixed number of workers**. Work goes as fast as the dependencies allow:
+everything that's ready starts now, and a card waits only because it depends on something
+you can name (a blocker, an open decision, shared code).
+
+1. Read `placement` and `cards` from the db (not from memory). Take Next in the human's
+   order (`order`), top first.
+2. A card is **ready** when:
+   - every `blockedBy` card is merged;
+   - it has no open Decide item (`decisions` is 0, or its items are answered);
+   - its areas don't overlap a running worker's areas, or a ready card above it in Next.
+     If they do, it depends on that work: hand it to that worker as its next PR, or hold
+     it until that merges.
+3. Skip cards that aren't ready (they keep their place; say why on the card if it isn't
+   obvious) and keep going down the list. Never reorder Next yourself.
+4. Promote **every** ready card: write its `placement` to `now`
+   (with `if_version`; a conflict means the human just moved it, so re-read and redo), then
+   start their workers as in "Running a round", steps 2–4.
+5. Tell the human in one short message: what moved into Now, its cost, and what's held back
+   and why. This is a notice, not a question.
+
+If Next is empty or nothing in it is ready, and nothing is running, close the round.
 
 ## When the worker and the plan disagree
 
@@ -147,7 +184,7 @@ Close the round when nothing is running and Next is empty:
    - what merged, with the headline result;
    - follow-ups filed;
    - deploy prerequisites;
-   - "move cards into Now and press Send to start the next round".
+   - "move cards from Later into Next and press Send; I'll take it from there".
 
 ## Check-in trigger prompt (template)
 
@@ -163,6 +200,8 @@ For each PR that's up:
 6. Set the card to merged.
 7. Tell the other workers to merge main.
 Check placement for new moves to Now and answers waiting on Decide.
+Pull from Next: promote ready cards (blockers merged, no open decisions, no area clash)
+in Next's order, all of them (no worker cap), start their workers, tell <human>.
 While anything runs, move this check-in 1 hour on.
 When nothing runs and Next is empty:
 - add the round note on #epic;
@@ -178,7 +217,7 @@ Rewrite it each round. A summary of old context doesn't survive compaction; this
   few lines with links. No tables wider than a phone.
 - Explain cost before starting work (workers × hours).
 - When they answer on the roadmap, act on all of it in one pass:
-  - placement moves;
+  - placement moves (a card moved into Next may be ready to pull right away);
   - decision answers;
   - notes.
 
