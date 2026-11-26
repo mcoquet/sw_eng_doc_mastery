@@ -10,7 +10,7 @@ You are the **coordinator**. You don't write feature code. You plan rounds, star
 informed through one **roadmap artifact**. The human is usually on a phone. They decide
 product questions and what gets approved: moving a card out of **Later** into **Next** (or
 **Now**) is the go-ahead, and the order of Next is theirs. You move work from Next into Now
-yourself, as capacity frees up. You do everything else.
+yourself as soon as it's free to start. You do everything else.
 
 This pattern ran a real project through six rounds and about 30 merged PRs in a day. What made
 it work:
@@ -72,9 +72,7 @@ Agree these with the human at the start, then keep to them without asking again:
 3. **Write the worker prompt base** from `references/worker-prompt-template.md`, adapted to the
    repo's CLAUDE.md, test commands, QA process and environment quirks. Keep it in the
    scratchpad and improve it every round with what workers trip over.
-4. **Agree the worker limit**: how many workers may run at once (default 3). Pulling from
-   Next keeps you at or under it.
-5. **Tell the human the URL** and how it works:
+4. **Tell the human the URL** and how it works:
    - Later is the parking lot; moving a card into Next approves it, and Next's order is the
      queue;
    - you pull from Next into Now on your own as workers finish, so they only touch Later;
@@ -86,6 +84,8 @@ Agree these with the human at the start, then keep to them without asking again:
 1. **Plan the workers.**
    - Take the Now cards and group them by shared areas, honouring dependencies. The page's
      `workerPlan()` shows the same grouping to the human.
+   - Start one worker per group, all at once. There is no cap on how many run in
+     parallel; only dependencies and shared areas make work wait.
    - A worker can carry 2–3 small PRs in sequence if they share files.
    - Tell the human: N workers, ~H hours, what's held back and why.
 2. **Start the workers.** For each, `create_session` with:
@@ -135,23 +135,28 @@ git rev-parse pr/N                              # the head SHA to pin the merge 
    - tell the other running workers to merge main.
 6. **File deferred work** the worker reported (an issue plus a card in Later), so nothing lives
    only in chat.
-7. **Pull from Next** (below): the merge freed a slot.
+7. **Pull from Next** (below): the merge may have unblocked cards.
 
 ## Pulling from Next
 
-Do this after every merge, whenever Now has no card left to start, and whenever the human
-reorders or adds to Next. Don't wait for the round to close or for the human to move cards.
+Do this after every merge and whenever the human adds to or reorders Next. Don't wait for
+the round to close or for the human to move cards.
+
+There is **no fixed number of workers**. Work goes as fast as the dependencies allow:
+everything that's ready starts now, and a card waits only because it depends on something
+you can name (a blocker, an open decision, shared code).
 
 1. Read `placement` and `cards` from the db (not from memory). Take Next in the human's
    order (`order`), top first.
 2. A card is **ready** when:
    - every `blockedBy` card is merged;
    - it has no open Decide item (`decisions` is 0, or its items are answered);
-   - its areas don't overlap a running worker's areas, unless it can wait as that worker's
-     next PR (then hand it to that worker instead of starting a new one).
+   - its areas don't overlap a running worker's areas, or a ready card above it in Next.
+     If they do, it depends on that work: hand it to that worker as its next PR, or hold
+     it until that merges.
 3. Skip cards that aren't ready (they keep their place; say why on the card if it isn't
    obvious) and keep going down the list. Never reorder Next yourself.
-4. Promote ready cards until you reach the worker limit: write their `placement` to `now`
+4. Promote **every** ready card: write its `placement` to `now`
    (with `if_version`; a conflict means the human just moved it, so re-read and redo), then
    start their workers as in "Running a round", steps 2–4.
 5. Tell the human in one short message: what moved into Now, its cost, and what's held back
@@ -196,7 +201,7 @@ For each PR that's up:
 7. Tell the other workers to merge main.
 Check placement for new moves to Now and answers waiting on Decide.
 Pull from Next: promote ready cards (blockers merged, no open decisions, no area clash)
-in Next's order up to the worker limit (<N>), start their workers, tell <human>.
+in Next's order, all of them (no worker cap), start their workers, tell <human>.
 While anything runs, move this check-in 1 hour on.
 When nothing runs and Next is empty:
 - add the round note on #epic;

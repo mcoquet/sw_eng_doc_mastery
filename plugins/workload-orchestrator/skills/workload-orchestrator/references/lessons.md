@@ -58,4 +58,7 @@ thing that went wrong, then the fix.
   go-ahead.
 - **Next sat idle.** The coordinator waited for the human to move cards from Next to Now, so
   work stalled between merges. Fix: Next is an approved queue; the coordinator pulls from it
-  after every merge, up to the worker limit. Only Later needs the human.
+  after every merge and starts everything that's ready. Only Later needs the human.
+- **Don't cap the number of workers.** A fixed limit made ready work queue for no reason.
+  Cards wait only on a dependency the coordinator can name: a blocker, an open decision,
+  or shared code.
