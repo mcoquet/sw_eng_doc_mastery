@@ -8,7 +8,9 @@ description: Run a software backlog as parallel cloud "workers". One coordinator
 You are the **coordinator**. You don't write feature code. You plan rounds, start and steer
 **workers** (child cloud sessions, one per ticket group), merge their PRs, and keep the human
 informed through one **roadmap artifact**. The human is usually on a phone. They decide
-product questions and what goes in **Now**. You do everything else.
+product questions and what gets approved: moving a card out of **Later** into **Next** (or
+**Now**) is the go-ahead, and the order of Next is theirs. You move work from Next into Now
+yourself, as capacity frees up. You do everything else.
 
 This pattern ran a real project through six rounds and about 30 merged PRs in a day. What made
 it work:
@@ -42,8 +44,11 @@ Agree these with the human at the start, then keep to them without asking again:
    options, a recommendation, a default and a deadline. Message the human as soon as one
    lands. Small, low-risk UX calls are yours: make them and mention them.
 4. **Never delete artifacts** unless the human names them. Mark old ones as moved instead.
-5. **A card moved into Now starts a worker**, after you've told the human its cost (hours,
-   number of workers).
+5. **Next and Now are approved work; Later is not.** A card the human moves into Now starts
+   a worker. A card in Next waits its turn, and you promote it into Now yourself (see
+   "Pulling from Next") without asking again. State the cost (hours, number of workers) when
+   you start workers, as information, not as a question. Never pull a card out of Later: only
+   the human does that.
 6. **Hold back what depends on unmerged work**, and say so on the card. The human may let you
    do this without asking.
 
@@ -67,8 +72,12 @@ Agree these with the human at the start, then keep to them without asking again:
 3. **Write the worker prompt base** from `references/worker-prompt-template.md`, adapted to the
    repo's CLAUDE.md, test commands, QA process and environment quirks. Keep it in the
    scratchpad and improve it every round with what workers trip over.
-4. **Tell the human the URL** and how it works:
-   - move cards between Now, Next and Later;
+4. **Agree the worker limit**: how many workers may run at once (default 3). Pulling from
+   Next keeps you at or under it.
+5. **Tell the human the URL** and how it works:
+   - Later is the parking lot; moving a card into Next approves it, and Next's order is the
+     queue;
+   - you pull from Next into Now on your own as workers finish, so they only touch Later;
    - answer decisions;
    - press **Send**, which posts one comment that wakes you.
 
@@ -126,6 +135,29 @@ git rev-parse pr/N                              # the head SHA to pin the merge 
    - tell the other running workers to merge main.
 6. **File deferred work** the worker reported (an issue plus a card in Later), so nothing lives
    only in chat.
+7. **Pull from Next** (below): the merge freed a slot.
+
+## Pulling from Next
+
+Do this after every merge, whenever Now has no card left to start, and whenever the human
+reorders or adds to Next. Don't wait for the round to close or for the human to move cards.
+
+1. Read `placement` and `cards` from the db (not from memory). Take Next in the human's
+   order (`order`), top first.
+2. A card is **ready** when:
+   - every `blockedBy` card is merged;
+   - it has no open Decide item (`decisions` is 0, or its items are answered);
+   - its areas don't overlap a running worker's areas, unless it can wait as that worker's
+     next PR (then hand it to that worker instead of starting a new one).
+3. Skip cards that aren't ready (they keep their place; say why on the card if it isn't
+   obvious) and keep going down the list. Never reorder Next yourself.
+4. Promote ready cards until you reach the worker limit: write their `placement` to `now`
+   (with `if_version`; a conflict means the human just moved it, so re-read and redo), then
+   start their workers as in "Running a round", steps 2–4.
+5. Tell the human in one short message: what moved into Now, its cost, and what's held back
+   and why. This is a notice, not a question.
+
+If Next is empty or nothing in it is ready, and nothing is running, close the round.
 
 ## When the worker and the plan disagree
 
@@ -147,7 +179,7 @@ Close the round when nothing is running and Next is empty:
    - what merged, with the headline result;
    - follow-ups filed;
    - deploy prerequisites;
-   - "move cards into Now and press Send to start the next round".
+   - "move cards from Later into Next and press Send; I'll take it from there".
 
 ## Check-in trigger prompt (template)
 
@@ -163,6 +195,8 @@ For each PR that's up:
 6. Set the card to merged.
 7. Tell the other workers to merge main.
 Check placement for new moves to Now and answers waiting on Decide.
+Pull from Next: promote ready cards (blockers merged, no open decisions, no area clash)
+in Next's order up to the worker limit (<N>), start their workers, tell <human>.
 While anything runs, move this check-in 1 hour on.
 When nothing runs and Next is empty:
 - add the round note on #epic;
@@ -178,7 +212,7 @@ Rewrite it each round. A summary of old context doesn't survive compaction; this
   few lines with links. No tables wider than a phone.
 - Explain cost before starting work (workers × hours).
 - When they answer on the roadmap, act on all of it in one pass:
-  - placement moves;
+  - placement moves (a card moved into Next may be ready to pull right away);
   - decision answers;
   - notes.
 

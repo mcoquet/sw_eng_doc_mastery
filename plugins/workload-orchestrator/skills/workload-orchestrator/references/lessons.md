@@ -54,4 +54,8 @@ thing that went wrong, then the fix.
 - They're on mobile all the time. Short messages, the action first, links over pasted
   content.
 - Message them as soon as a question lands. Don't batch questions until the end of a round.
-- State the cost before starting workers. A card moved into Now is the go-ahead.
+- State the cost when starting workers. A card moved out of Later (into Next or Now) is the
+  go-ahead.
+- **Next sat idle.** The coordinator waited for the human to move cards from Next to Now, so
+  work stalled between merges. Fix: Next is an approved queue; the coordinator pulls from it
+  after every merge, up to the worker limit. Only Later needs the human.
