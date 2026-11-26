@@ -1,6 +1,6 @@
 {
   "name": "workload-orchestrator",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "MIT",
   "description": "Coordinate parallel Claude Code cloud sessions (workers) through a backlog: file-disjoint ticket groups, merges on test and QA proof, and a mobile roadmap artifact (Decide / Now / Next / Later) as the control surface with the human.",
   "author": {
